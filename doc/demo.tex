@@ -1,58 +1,5 @@
 \chapter{How to Use}
 
-\section{Vector: Set Value}
-\begin{evb}
-{
-    SX_VEC v;
-    SX_INT n, i;
-
-    v = sx_vec_create(n);
-
-    /* way 1: v[i] = 1. */
-    sx_vec_set_value(&v, 1.);
-
-    /* way 2: v[i] = 1 */
-    for (i = 0; i < n; i++) {
-        sx_vec_set_entry(&v, i, 1);
-    }
-
-    /* way 3: v[i] = i / 3. */
-    for (i = 0; i < n; i++) {
-        sx_vec_set_entry(&v, i, i / 3.);
-    }
-}
-\end{evb}
-
-
-\section{Vector: Get Value}
-\begin{evb}
-{
-    SX_VEC v;
-    SX_INT n, i;
-    SX_FLOAT val;
-
-    n = sx_vec_get_size(&v);
-    for (i = 0; i < n; i++) {
-        val = sx_vec_get_entry(&v, i);
-    }
-}
-\end{evb}
-
-\section{Create a Matrix}
-
-\begin{evb}
-{
-    SX_MAT A;
-    SX_INT *Ap, *Aj;
-    SX_FLOAT *Ax;
-
-    /* input Ap, Aj, Ax */
-
-    /* gen A */
-    A =  sx_mat_create(nrow, ncol, Ap, Aj, Ax);
-}
-\end{evb}
-
 \section{Solver}
 
 This example shows how to use SXAMG as a solver.
