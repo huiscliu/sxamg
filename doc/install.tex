@@ -1,0 +1,96 @@
+
+\chapter{Installation}
+
+
+\verb|SXAMG| uses {\color{blue}{\nverb{autoconf}}} and {\color{blue}{\nverb{make}}} 
+to detect system parameters, to build and to install.
+
+\section{Configuration}
+The simplest way to configure is to run command:
+\begin{evb}
+./configure
+\end{evb}
+
+This command will try to find optional packages if applicable and set system parameters.
+
+\section{Options}
+The script {\color{blue}{configure}} has many options, if user would like to check, 
+run command:
+\begin{evb}
+./configure --help
+\end{evb}
+
+Output will be like this,
+\begin{evb}
+`configure' configures this package to adapt to many kinds of systems.
+
+Usage: ./configure [OPTION]... [VAR=VALUE]...
+
+To assign environment variables (e.g., CC, CFLAGS...), specify them as
+VAR=VALUE.  See below for descriptions of some of the useful variables.
+
+....
+
+Optional Features:
+  --disable-option-checking  ignore unrecognized --enable/--with options
+  --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
+  --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+  --enable-rpath          enable use of rpath (default)
+  --disable-rpath         disable use of rpath
+  --with-rpath-flag=FLAG  compiler flag for rpath (e.g., "-Wl,-rpath,")
+  --disable-assert        turn off assertions
+  --enable-big-int        use long int for INT
+  --disable-big-int       use int for INT (default),
+  --with-int=type         integer type(long|long long)
+  --enable-long-double    use long double for FLOAT
+  --disable-long-double   use double for FLOAT (default)
+
+Some influential environment variables:
+  CC          C compiler command
+  CFLAGS      C compiler flags
+  LDFLAGS     linker flags, e.g. -L<lib dir> if you have libraries in a
+              nonstandard directory <lib dir>
+  LIBS        libraries to pass to the linker, e.g. -l<library>
+  CPPFLAGS    (Objective) C/C++ preprocessor flags, e.g. -I<include dir> if
+              you have headers in a nonstandard directory <include dir>
+  CXX         C++ compiler command
+  CXXFLAGS    C++ compiler flags
+  FC          Fortran compiler command
+  FCFLAGS     Fortran compiler flags
+  CPP         C preprocessor
+  CXXCPP      C++ preprocessor
+\end{evb}
+
+The most important options are,
+\begin{itemize}
+    \item \nverb{--prefix=PATH} where to install the library, and default directory is \verb|/usr/local/sxamg/|;
+
+    \item \nverb{--enable-rpath} and \nverb{--disable-rpath}, use rpath or not, and it is enabled by default;
+
+    \item \nverb{--enable-big-int} and \nverb{--disable-big-int}, use big integer or not, and use \nverb{int} by default;
+
+    \item \nverb{--with-int=type}, type is \nverb{long} or \nverb{long long}. This option is checked when big integer
+        is enabled (\nverb{--enable-big-int});
+
+    \item \nverb{--enable-long-double} and \nverb{--disable-long-double}, use \nverb{long double} or not, and
+        \nverb{double} is used by default;
+
+\end{itemize}
+
+\section{Compilation}
+After configuration, \nverb{Makefile} and related scripts will be set correctly.
+A simple {\color{blue}\textbf{make}} command can compile the package,
+
+\begin{evb}
+make
+\end{evb}
+
+\section{Installation}
+Run command:
+\begin{evb}
+make install
+\end{evb}
+The package will be installed to a directory. The default is \nverb{/usr/local/sxamg/}. 
+A different directory can be set by \nverb{--prefix=DIR} when configuring, 
+such as \nverb{--prefix=/usr/sxamg/}.
+

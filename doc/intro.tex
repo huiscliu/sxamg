@@ -1,0 +1,40 @@
+
+\chapter{Introduction}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Overview}
+
+\verb|SXAMG| is an AMG (Algebraic Multi-Grid) solver 
+library for sparse linear system, \verb|Ax = b|. 
+The package is designed for Linux, Unix and Mac systems. 
+It is also possible to compile under Windows if \verb|USE_UNIX| is set to 0. 
+The code is written by C, and it is serial.
+
+The initial code is from FASP solver, http://fasp.sourceforge.net, which implements a collection of Krylov solvers, AMG solvers and preconditioners.
+
+The purpose of this refactorization is to provide a standalone AMG solver to support other numerical applications and to validate new ideas in the future. The \verb|SXAMG| can serve as a solver and a preconditioning method.
+\verb|SXAMG| rewrites all the data structures, subroutines, and file structures, and it removes many components of the original implementation and third-party package dependency.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{License}
+
+The package uses General Public License (GPL) license. 
+If you have any issue, please contact: \href{mailto: hui.sc.liu@gmail.com}{hui.sc.liu@gmail.com}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Cite}
+The \verb|SXAMG| library can be cited as,
+\begin{evb}
+@misc{sxamg-library,
+    author="Hui Liu",
+    title="SXAMG: a Serial Algebraic Multigrid Solver Library",
+    year="2017",
+    note={\url{https://github.com/huijwliu/sxamg/}}
+}
+\end{evb}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Website}
+The official website for \verb|SXAMG| is \url{https://github.com/huijwliu/sxamg/}.
+

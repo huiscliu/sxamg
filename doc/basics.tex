@@ -1,0 +1,168 @@
+
+\chapter{Basics}
+
+This chapter introduces basic types, matrix and vector management.
+
+\section{Data Types}
+
+\verb|SXAMG| has two data types, \verb|SX_FLOAT| and \verb|SX_INT|, for floating-point number
+and integer. They are defined as:
+\begin{evb}
+#if USE_LONG_DOUBLE
+typedef long double              SX_FLOAT;
+#else
+typedef double                   SX_FLOAT;
+#endif
+
+#if USE_LONG_LONG
+typedef signed long long int     SX_INT;
+#elif USE_LONG
+typedef signed long int          SX_INT;
+#else
+typedef signed int               SX_INT;
+#endif
+
+\end{evb}
+
+The macros, \nverb{USE_LONG_DOUBLE}, \nverb{USE_LONG_LONG} and \nverb{USE_LONG}, are set by \nverb{configure} to
+control the real types. User can control through  \nverb{configure} options.
+
+\section{Matrix}
+\nverb{SX_MAT} defines CSR matrix. The index is from zero. The meanings of the members are clear.
+\begin{evb}
+typedef struct SX_MAT
+{
+    SX_INT num_rows;
+    SX_INT num_cols;
+    SX_INT num_nnzs;
+
+    SX_INT   *Ap;
+    SX_INT   *Aj;
+    SX_FLOAT *Ax;
+
+} SX_MAT;
+\end{evb}
+
+\subsection{Matrix Management}
+
+\subsubsection{Create}
+
+\nverb{sx_mat_struct_create} creates the structure of a matrix, and no value is set:
+\begin{evb}
+SX_MAT sx_mat_struct_create(const SX_INT nrow, const SX_INT ncol, const SX_INT nnz);
+\end{evb}
+
+\nverb{sx_mat_create} creates a CSR matrix:
+\begin{evb}
+SX_MAT sx_mat_create(SX_INT nrow, SX_INT ncol, SX_INT *Ap, SX_INT *Aj, SX_FLOAT *Ax);
+\end{evb}
+
+\subsubsection{Destroy}
+\nverb{sx_mat_destroy} destroys a matrix and frees its memory:
+\begin{evb}
+void sx_mat_destroy(SX_MAT *A);
+\end{evb}
+
+\subsubsection{Transpose}
+\nverb{sx_mat_trans} gets transpose a matrix:
+\begin{evb}
+SX_MAT sx_mat_trans(SX_MAT *A);
+\end{evb}
+
+\subsubsection{Sort}
+\nverb{sx_mat_sort} sorts column indices in ascending manner.
+\begin{evb}
+void sx_mat_sort(SX_MAT *A);
+\end{evb}
+
+\section{Vector}
+
+\nverb{SX_VEC} defines floating-point vector. $n$ is the length of the vector, and $d$
+stores the values.
+\begin{evb}
+typedef struct SX_VEC 
+{
+    SX_INT   n;
+    SX_FLOAT *d;
+
+} SX_VEC;
+\end{evb}
+
+\subsection{Vector Management}
+
+\subsubsection{Create}
+\nverb{sx_vec_create} creates a vector of length $m$.
+\begin{evb}
+SX_VEC sx_vec_create(SX_INT m);
+\end{evb}
+
+\subsubsection{Destroy}
+
+\nverb{sx_vec_destroy} destroys a vector and frees its memory.
+\begin{evb}
+void sx_vec_destroy(SX_VEC *u);
+\end{evb}
+
+\subsubsection{Set Value}
+
+\nverb{sx_vec_set_value} sets equal value to each component.
+\begin{evb}
+void sx_vec_set_value(SX_VEC *x, SX_FLOAT val);
+\end{evb}
+
+\nverb{sx_vec_set_entry} sets value: x[index] = val,
+\begin{evb}
+void sx_vec_set_entry(SX_VEC *x, SX_INT index, SX_FLOAT val);
+\end{evb}
+
+\subsubsection{Get Value}
+\nverb{sx_vec_get_entry} returns value of x[index],
+\begin{evb}
+SX_FLOAT sx_vec_get_entry(SX_VEC *x, SX_INT index);
+\end{evb}
+
+\subsubsection{Copy}
+\nverb{sx_vec_cp} copies source vector to destination vector.
+\begin{evb}
+void sx_vec_cp(SX_VEC *src, SX_VEC *des);
+\end{evb}
+
+\section{BLAS Operations}
+
+\subsection{Vector}
+\nverb{sx_blas_vec_norm2} calculates L2 norm.
+\begin{evb}
+SX_FLOAT sx_blas_vec_norm2(SX_VEC *x);
+\end{evb}
+
+\nverb{sx_blas_vec_dot} calculates dot product.
+\begin{evb}
+SX_FLOAT sx_blas_vec_dot(SX_VEC *x, SX_VEC *y);
+\end{evb}
+
+\nverb{sx_blas_vec_axpyz} computes: $z = a * x + y$.
+\begin{evb}
+void sx_blas_vec_axpyz(const SX_FLOAT a, SX_VEC *x, SX_VEC *y, SX_VEC *z);
+\end{evb}
+
+\nverb{sx_blas_vec_axpy} computes: $y = a * x + y$.
+\begin{evb}
+void sx_blas_vec_axpy(const SX_FLOAT a, SX_VEC *x, SX_VEC *y);
+\end{evb}
+
+\subsection{Matrix-Vector}
+\nverb{sx_blas_mat_amxpy} computes: $ y = y + a * A * x $,
+\begin{evb}
+void sx_blas_mat_amxpy(const SX_FLOAT alpha, SX_MAT *A, SX_VEC *x, SX_VEC *y);
+\end{evb}
+
+\nverb{sx_blas_mat_mxy} computes: $y = A * x $,
+\begin{evb}
+void sx_blas_mat_mxy(SX_MAT *A, SX_VEC *x, SX_VEC *y);
+\end{evb}
+
+\subsection{Matrix-Matrix}
+\nverb{sx_blas_mat_rap} returns the matrix-matrix product: $ R * A * P$,
+\begin{evb}
+SX_MAT sx_blas_mat_rap(SX_MAT *R, SX_MAT *A, SX_MAT *P);
+\end{evb}

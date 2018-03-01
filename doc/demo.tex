@@ -1,0 +1,138 @@
+\chapter{How to Use}
+
+\section{Vector: Set Value}
+\begin{evb}
+{
+    SX_VEC v;
+    SX_INT n, i;
+
+    v = sx_vec_create(n);
+
+    /* way 1: v[i] = 1. */
+    sx_vec_set_value(v, 1.);
+
+    /* way 2: v[i] = 1 */
+    for (i = 0; i < n; i++) {
+        sx_vec_set_entry(&v, i, 1);
+    }
+
+    /* way 3: v[i] = i / 3. */
+    for (i = 0; i < n; i++) {
+        sx_vec_set_entry(&v, i, i / 3.);
+    }
+}
+\end{evb}
+
+
+\section{Vector: Get Value}
+\begin{evb}
+{
+    SX_VEC v;
+    SX_INT n, i;
+    SX_FLOAT val;
+
+    n = sx_vec_get_size(&v);
+    for (i = 0; i < n; i++) {
+        val = sx_vec_get_entry(&v, i);
+    }
+}
+\end{evb}
+
+\section{Create a Matrix}
+
+\begin{evb}
+{
+    SX_MAT A;
+    SX_INT *Ap, *Aj;
+    SX_FLOAT *Ax;
+
+    /* input Ap, Aj, Ax */
+
+    /* gen A */
+    A =  sx_mat_create(nrow, ncol, Ap, Aj, Ax);
+}
+\end{evb}
+
+\section{Solver}
+
+This example shows how to use SXAMG as a solver.
+
+\begin{evb}
+{
+    SX_AMG_PARS pars;
+    SX_MAT A;
+    SX_VEC b, x;
+    int verb = 2;
+    SX_RTN rtn;
+    
+    /* default pars */
+    sx_amg_pars_init(&pars);
+
+    /* redefine parameters */
+    pars.maxit = 1000;
+    pars.verb = 2;
+    
+    /* set A, b, initial x */
+    ....
+    
+    /* solve the system */
+    rtn = sx_solver_amg(&A, &x, &b, &pars);
+    
+    /* free memory */
+    sx_mat_destroy(&A);
+    sx_vec_destroy(&b);
+    sx_vec_destroy(&x);
+}
+\end{evb}
+
+We can see that only two functions are called: 1) \nverb{sx_amg_pars_init} initializes default AMG
+parameters; 2) \nverb{sx_solver_amg} setups, solves and destroys the AMG system, and the solution
+is stored by \nverb{x}.
+
+The user needs to provide, matrix, right-hand side and initial guess.
+
+\section{Lower Level Interface}
+
+This example exposes more details of the AMG solver: 1) setup; 2) solve; 3) destroy.
+
+\begin{evb}
+{
+    SX_AMG_PARS pars;
+    SX_MAT A;
+    SX_VEC b, x;
+    int verb = 2;
+    SX_AMG *mg;
+    SX_RTN rtn;
+    
+    /* pars */
+    sx_amg_pars_init(&pars);
+    pars.maxit = 1000;
+    pars.verb = 2;
+    
+    /* input A */
+    ....
+
+    // Step 1: AMG setup phase
+    mg = sx_amg_setup(&A, &pars);
+
+    // Step 2: AMG solve phase
+    /* rhs and initial guess */
+    x = sx_vec_create(A.num_rows);
+    sx_vec_set_value(&x, 1.0);
+
+    b = sx_vec_create(A.num_rows);
+    sx_vec_set_value(&b, 1.0);
+
+    /* solve */
+    rtn = sx_solver_amg_solve(mg, &x, &b);
+
+    sx_mat_destroy(&A);
+    sx_vec_destroy(&b);
+    sx_vec_destroy(&x);
+    sx_amg_data_destroy(&mg);
+}
+\end{evb}
+
+The user can modify this example to use SXAMG as a preconditioner, where the AMG system is assembled
+once and other solvers can call solving phase in each iteration.
+

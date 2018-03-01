@@ -1,0 +1,116 @@
+
+\documentclass[12pt]{book}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\usepackage[ruled]{algorithm2e}
+
+\usepackage{fancyheadings}
+\usepackage{setspace}
+\usepackage{color}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{fancyvrb}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{lipsum}
+\usepackage{imakeidx}
+\usepackage[bookmarksnumbered=true,colorlinks=true,linkcolor=blue]{hyperref}
+
+\textwidth=17cm
+\textheight=22.5cm
+
+\setlength{\oddsidemargin}{-0.1in}
+\setlength{\evensidemargin}{-0.1in}
+
+\topmargin=3pt
+\abovecaptionskip=3pt
+\belowcaptionskip=3pt
+
+
+\marginparwidth 0pt \marginparsep 10pt
+\columnsep 0.5in \parindent  18pt   \parskip  0pt
+\setlength{\itemsep}{.5pt}
+\setlength{\parsep}{0pt}
+\setlength\parindent{0pt}
+\setcounter{secnumdepth}{4}
+
+\definecolor{verbgray}{gray}{0.9}
+
+\lstnewenvironment{evb}{%
+      \lstset{backgroundcolor=\color{verbgray},
+        frame=single, framerule=0pt, basicstyle=\footnotesize\ttfamily,
+              columns=fullflexible, keepspaces=true, belowskip=0.3cm}}{}
+
+\definecolor{shadecolor}{rgb}{.9, .9, .9}
+
+%%%%%% nverb
+\lstset{
+        basicstyle=\color{blue} \ttfamily,
+}
+\lstdefinestyle{inline}{
+    columns=fullflexible,breaklines=true
+}
+\newcommand{\nverb}[1]{\lstinline[style=inline]!#1!}
+
+\pagestyle{fancy}
+
+\fancyhead[RE]{\leftmark}
+\fancyhead[LO]{\rightmark}
+\fancyhead[LE,RO]{}
+\renewcommand\sectionmark[1]{\markright{\thesection.\ #1}}
+
+\newcommand{\namelistlabel}[1]{\mbox{#1}\hfill}
+\newenvironment{namelist}[1]{%
+\begin{list}{}
+  {\let\makelabel\namelistlabel
+  \settowidth{\labelwidth}{#1}
+  \setlength{\leftmargin}{1.1\labelwidth}}
+  }{%
+\end{list}}
+
+\makeindex
+
+\begin{document}
+
+\begin{titlepage}
+\begin{center}
+
+\vspace{5cm}
+\begin{spacing}{2.5}
+\vspace{5cm}
+\textbf{} \\[1.5cm]
+\textbf{\Huge SXAMG: a Serial Algebraic Multigrid Solver Library} \\[0.5cm]
+\textbf{VERSION 1.0}
+\vspace*{\fill}
+\end{spacing}
+
+\begin{spacing}{1.15}
+\textnormal{\large Hui Liu}
+\end{spacing}
+\end{center}
+\end{titlepage}
+
+\tableofcontents
+
+\setlength{\parskip}{8pt}
+
+\clearpage
+\pagenumbering{arabic}
+
+\include{intro}
+\include{install}
+\include{basics}
+\include{solver}
+\include{utils}
+\include{demo}
+
+\backmatter
+\printindex
+
+\end{document}

@@ -1,0 +1,42 @@
+
+#ifndef PLS_CONFIG_H
+#define PLS_CONFIG_H
+
+/* system, headers and libs */
+#define STDC_HEADERS     0
+#define HAVE_STDLIB_H    0
+#define HAVE_STRING_H    0
+#define HAVE_INTTYPES_H   0
+#define HAVE_STDINT_H    0
+#define HAVE_UNISTD_H    0
+#define HAVE_SYS_TYPES_H   0
+#define HAVE_SYS_STAT_H   0
+#define TIME_WITH_SYS_TIME  0
+#define HAVE_SYS_TIME_H   0
+#define HAVE_SYS_RESOURCE_H 0
+#define HAVE_GETTIMEOFDAY  0
+#define HAVE_GETRUSAGE    0
+
+/* data type */
+#define USE_LONG           0
+#define USE_LONG_LONG      0
+#define dFMT               "d"
+
+#define USE_LONG_DOUBLE    0
+#define fFMTe              "e"
+#define fFMTE              "E"
+#define fFMTf              "f"
+#define fFMTg              "g"
+#define fFMTG              "G"
+
+#define SIZEOF_INT               4
+#define SIZEOF_LONG              8
+#define SIZEOF_LONG_LONG         8
+#define SIZEOF_FLOAT             4
+#define SIZEOF_DOUBLE            8
+#define SIZEOF_LONG_DOUBLE       16
+#define SIZEOF_VOID_P            4
+
+#define USE_UNIX                 1
+
+#endif
