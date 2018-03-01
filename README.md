@@ -34,7 +34,6 @@ The package will be installed to a directory. The default is /usr/local/sxamg/. 
 The following codes show how to use SXAMG as a solver.
 
 ```
-\begin{evb}
 {
     SX_AMG_PARS pars;
     SX_MAT A;
