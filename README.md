@@ -8,16 +8,13 @@ The simplest way to configure is to run command:
 ```
 ./configure
 ```
-This command will try to find optional packages from certain directories. Searching details are included by configure.in and some are explained below.
+This command will detect system and set default options.
 
 ## Options
 Run command:
 ```
 ./configure --help
 ```
-
-Most optional packages are enabled by default. However, a package can be disabled when configuring, such as "--disable-itsol" to disable ITSOL. When a package needs an include path and a library path, they can be set by configure, such as --with-itsol-libdir=DIR and --with-itsol-incdir=DIR, which set library and include paths for ITSOL. If configure cannot find correct paths, users can help configure by using options.
-
 
 ## Compilation
 After configuration, a simple **make** command can compile the package:
