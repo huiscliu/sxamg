@@ -27,5 +27,5 @@ Run command:
 ```
 make install
 ```
-The package will be installed to a directory. The default is /usr/local/lssp/. A different directory can be set by --prefix=DIR.
+The package will be installed to a directory. The default is /usr/local/sxamg/. A different directory can be set by --prefix=DIR.
 
