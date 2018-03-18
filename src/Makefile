@@ -18,9 +18,11 @@ lib: lib$(NLIB).a
 lib$(NLIB).a: ${OBJS}
 	${AR} -ruv $@ $(OBJS)
 	${RANLIB} $@
+	cp -f lib$(NLIB).a ../lib/
 
 .PHONY: clean
 
 clean:
 	@rm -fv lib*.a
+	@rm -fv ../lib/lib*.a
 	@rm -fv *.o 

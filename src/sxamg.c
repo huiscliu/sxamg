@@ -95,6 +95,7 @@ SX_RTN sx_solver_amg(SX_MAT *A, SX_VEC *x, SX_VEC *b, SX_AMG_PARS *pars)
     SX_INT verb;
     SX_INT nnz, m, n;
     SX_RTN rtn;
+    SX_AMG_PARS npars;
 
     SX_AMG *mg;
     SX_FLOAT AMG_start, AMG_end;
@@ -103,7 +104,11 @@ SX_RTN sx_solver_amg(SX_MAT *A, SX_VEC *x, SX_VEC *b, SX_AMG_PARS *pars)
     assert(A != NULL);
     assert(b != NULL);
     assert(x != NULL);
-    assert(pars != NULL);
+
+    if (pars == NULL) {
+        sx_amg_pars_init(&npars);
+        pars = &npars;
+    }
 
     verb = pars->verb;
     if (fabs(sumb) == 0.) {

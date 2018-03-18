@@ -17,6 +17,8 @@ SX_VEC sx_vec_create(SX_INT m)
 {
     SX_VEC u;
 
+    assert(m >= 0);
+
     u.n = m;
     u.d = (SX_FLOAT *) sx_mem_calloc(m, sizeof(SX_FLOAT));
 
@@ -37,6 +39,8 @@ SX_IVEC sx_ivec_create(SX_INT m)
 {
     SX_IVEC u;
 
+    assert(m >= 0);
+
     u.n = m;
     u.d = (SX_INT *) sx_mem_calloc(m, sizeof(SX_INT));
 
@@ -53,8 +57,7 @@ SX_IVEC sx_ivec_create(SX_INT m)
  */
 void sx_vec_destroy(SX_VEC * u)
 {
-    if (u == NULL)
-        return;
+    if (u == NULL) return;
 
     sx_mem_free(u->d);
     u->n = 0;
@@ -72,8 +75,7 @@ void sx_vec_destroy(SX_VEC * u)
  */
 void sx_ivec_destroy(SX_IVEC * u)
 {
-    if (u == NULL)
-        return;
+    if (u == NULL) return;
 
     sx_mem_free(u->d);
     u->n = 0;

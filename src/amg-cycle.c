@@ -22,6 +22,7 @@ void sx_amg_cycle(SX_AMG *mg)
     SX_INT num_lvl[MAX_AMG_LVL] = {0}, l = 0;
 
     if (tol > mg->pars.tol)  tol = mg->pars.tol * 0.1;
+    if (cycle_itr <= 0) cycle_itr = 1;
 
 ForwardSweep:
     while (l < nl - 1) {

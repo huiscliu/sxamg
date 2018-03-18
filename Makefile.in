@@ -28,7 +28,7 @@ install:
 	@(cd src; $(MAKE))
 	@mkdir -p ${libdir}
 	@/bin/rm -f ${libdir}/lib${NLIB}${LIB_SUFFIX} ${libdir}/lib${NLIB}.so >/dev/null 2>&1 || true
-	@cp src/lib${NLIB}${LIB_SUFFIX} ${libdir}/
+	@cp -f lib/lib${NLIB}${LIB_SUFFIX} ${libdir}/
 	@chmod 0644 ${libdir}/lib${NLIB}${LIB_SUFFIX}
 	@echo "installing header files to ${includedir}/"
 	@mkdir -p ${includedir}

@@ -3,7 +3,7 @@
 
 
 \verb|SXAMG| uses {\color{blue}{\nverb{autoconf}}} and {\color{blue}{\nverb{make}}} 
-to detect system parameters, to build and to install.
+to detect system parameters, to set default parameters, to build and to install.
 
 \section{Configuration}
 The simplest way to configure is to run command:
@@ -85,12 +85,14 @@ A simple {\color{blue}\textbf{make}} command can compile the package,
 make
 \end{evb}
 
+A library, \verb|libsxamg.a|, will be generated under, \verb|lib/|.
+
 \section{Installation}
 Run command:
 \begin{evb}
 make install
 \end{evb}
-The package will be installed to a directory. The default is \nverb{/usr/local/sxamg/}. 
-A different directory can be set by \nverb{--prefix=DIR} when configuring, 
+The package will be installed to a user-defined directory by \nverb{--prefix=DIR} during configuring, 
 such as \nverb{--prefix=/usr/sxamg/}.
+The default destination is \nverb{/usr/local/sxamg/}. 
 

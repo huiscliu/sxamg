@@ -2,7 +2,21 @@
 
 \section{Solver}
 
-This example shows how to use SXAMG as a solver.
+This example shows how to use SXAMG as a solver.  Five steps are required to call: 
+\begin{enumerate}
+    \item \nverb{sx_amg_pars_init} initializes default AMG parameters, 
+        and user can check their value from source code;
+
+    \item Re-define parameters. This step is optional.
+
+    \item Input matrix, initial guess and right-hand side should be constructed.
+
+    \item \nverb{sx_solver_amg} setups, solves and destroys the AMG system, 
+        and the solution is stored by \nverb{x}.
+
+    \item Free memories.
+
+\end{enumerate}
 
 \begin{evb}
 {
@@ -12,35 +26,50 @@ This example shows how to use SXAMG as a solver.
     int verb = 2;
     SX_RTN rtn;
     
-    /* default pars */
+    /* step 1: default pars */
     sx_amg_pars_init(&pars);
 
-    /* redefine parameters */
+    /* step 2: redefine parameters */
     pars.maxit = 1000;
     pars.verb = 2;
     
-    /* set A, b, initial x */
+    /* step 3: set A, b, initial x */
     ....
     
-    /* solve the system */
+    /* step 4: solve the system */
     rtn = sx_solver_amg(&A, &x, &b, &pars);
     
-    /* free memory */
+    /* step 5: free memory */
     sx_mat_destroy(&A);
     sx_vec_destroy(&b);
     sx_vec_destroy(&x);
 }
 \end{evb}
 
-We can see that only two functions are called: 1) \nverb{sx_amg_pars_init} initializes default AMG
-parameters; 2) \nverb{sx_solver_amg} setups, solves and destroys the AMG system, and the solution
-is stored by \nverb{x}.
-
-The user needs to provide, matrix, right-hand side and initial guess.
 
 \section{Lower Level Interface}
 
-This example exposes more details of the AMG solver: 1) setup; 2) solve; 3) destroy.
+Sometimes user needs to store the AMG object and re-uses it, such as preconditioner.
+This example exposes more details of the AMG solver, where seven steps are required:
+\begin{enumerate}
+    \item initialize default parameters;
+
+    \item re-define parameters if default parameters do not meet requirement;
+
+    \item setup input matrix \nverb{A}, which is a standard CSR matrix;
+
+    \item setup AMG object;
+
+    \item setup initial guess and right-hand side;
+
+    \item solve the linear system using given \nverb{x} and \nverb{b};
+
+    \item free memories;
+
+\end{enumerate}
+
+Here user can call step 1) to 4) once in the beginning stage, call 5) and 6) as many as required, 
+and call step 7) in the end stage of the program.
 
 \begin{evb}
 {
@@ -51,28 +80,30 @@ This example exposes more details of the AMG solver: 1) setup; 2) solve; 3) dest
     SX_AMG *mg;
     SX_RTN rtn;
     
-    /* pars */
+    /* step 1: pars */
     sx_amg_pars_init(&pars);
+
+    /* step 2: re-define parameters */
     pars.maxit = 1000;
     pars.verb = 2;
     
-    /* input A */
+    /* step 3: input A */
     ....
 
-    // Step 1: AMG setup phase
+    /* Step 4: setup AMG setup object */
     mg = sx_amg_setup(&A, &pars);
 
-    // Step 2: AMG solve phase
-    /* rhs and initial guess */
+    /* Step 5: setup rhs and initial guess */
     x = sx_vec_create(A.num_rows);
     sx_vec_set_value(&x, 1.0);
 
     b = sx_vec_create(A.num_rows);
     sx_vec_set_value(&b, 1.0);
 
-    /* solve */
+    /* step 6: solve */
     rtn = sx_solver_amg_solve(mg, &x, &b);
 
+    /* step 7: free memories */
     sx_mat_destroy(&A);
     sx_vec_destroy(&b);
     sx_vec_destroy(&x);
@@ -80,6 +111,4 @@ This example exposes more details of the AMG solver: 1) setup; 2) solve; 3) dest
 }
 \end{evb}
 
-The user can modify this example to use SXAMG as a preconditioner, where the AMG system is assembled
-once and other solvers can call solving phase in each iteration.
 
