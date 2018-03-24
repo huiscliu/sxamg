@@ -3,7 +3,7 @@
 #include "internal.h"
 
 /**
- * \fn void sx_blas_array_set (const SX_INT n, SX_FLOAT *x, const SX_FLOAT val)
+ * \fn void sx_blas_array_set (SX_INT n, SX_FLOAT *x, SX_FLOAT val)
  *
  * \brief Set initial value for an array to be x=val
  *
@@ -12,7 +12,7 @@
  * \pars val  Initial value for the SX_FLOAT array
  *
  */
-void sx_blas_array_set(const SX_INT n, SX_FLOAT *x, const SX_FLOAT val)
+void sx_blas_array_set( SX_INT n, SX_FLOAT *x, SX_FLOAT val)
 {
     SX_INT i;
 
@@ -25,7 +25,7 @@ void sx_blas_array_set(const SX_INT n, SX_FLOAT *x, const SX_FLOAT val)
 }
 
 /**
- * \fn void sx_blas_array_cp (const SX_INT n, SX_FLOAT *x, SX_FLOAT *y) 
+ * \fn void sx_blas_array_cp (SX_INT n, const SX_FLOAT *x, SX_FLOAT *y) 
  *
  * \brief Copy an array to the other y=x
  *
@@ -34,12 +34,12 @@ void sx_blas_array_set(const SX_INT n, SX_FLOAT *x, const SX_FLOAT val)
  * \pars y    Pointer to the destination vector
  *
  */
-void sx_blas_array_cp(const SX_INT n, SX_FLOAT * x, SX_FLOAT * y)
+void sx_blas_array_cp(SX_INT n, const SX_FLOAT *x, SX_FLOAT *y)
 {
     memcpy(y, x, n * sizeof(SX_FLOAT));
 }
 
-void sx_blas_array_ax(const SX_INT n, const SX_FLOAT a, SX_FLOAT * x)
+void sx_blas_array_ax(SX_INT n, SX_FLOAT a, SX_FLOAT *x)
 {
     SX_INT i;
 
@@ -51,7 +51,7 @@ void sx_blas_array_ax(const SX_INT n, const SX_FLOAT a, SX_FLOAT * x)
     }
 }
 
-void sx_blas_array_axpy(const SX_INT n, const SX_FLOAT a, SX_FLOAT * x, SX_FLOAT * y)
+void sx_blas_array_axpy(SX_INT n, SX_FLOAT a, const SX_FLOAT *x, SX_FLOAT *y)
 {
     SX_INT i;
 
@@ -66,21 +66,21 @@ void sx_blas_array_axpy(const SX_INT n, const SX_FLOAT a, SX_FLOAT * x, SX_FLOAT
     }
 }
 
-void sx_blas_array_axpyz(const SX_INT n, const SX_FLOAT a, SX_FLOAT * x, SX_FLOAT * y, SX_FLOAT * z)
+void sx_blas_array_axpyz(SX_INT n, SX_FLOAT a, const SX_FLOAT *x, const SX_FLOAT *y, SX_FLOAT *z)
 {
     SX_INT i;
 
     for (i = 0; i < n; ++i) z[i] = a * x[i] + y[i];
 }
 
-void sx_blas_array_axpby(const SX_INT n, const SX_FLOAT a, SX_FLOAT * x, const SX_FLOAT b, SX_FLOAT * y)
+void sx_blas_array_axpby(SX_INT n, SX_FLOAT a, const SX_FLOAT *x, SX_FLOAT b, SX_FLOAT *y)
 {
     SX_INT i;
 
     for (i = 0; i < n; ++i) y[i] = a * x[i] + b * y[i];
 }
 
-SX_FLOAT sx_blas_array_dot(const SX_INT n, const SX_FLOAT * x, const SX_FLOAT * y)
+SX_FLOAT sx_blas_array_dot(SX_INT n, const SX_FLOAT *x, const SX_FLOAT *y)
 {
     SX_INT i;
     SX_FLOAT value = 0.0;
@@ -90,7 +90,7 @@ SX_FLOAT sx_blas_array_dot(const SX_INT n, const SX_FLOAT * x, const SX_FLOAT * 
     return value;
 }
 
-SX_FLOAT sx_blas_array_norm1(const SX_INT n, const SX_FLOAT * x)
+SX_FLOAT sx_blas_array_norm1(SX_INT n, const SX_FLOAT *x)
 {
     SX_INT i;
     SX_FLOAT onenorm = 0.;
@@ -100,7 +100,7 @@ SX_FLOAT sx_blas_array_norm1(const SX_INT n, const SX_FLOAT * x)
     return onenorm;
 }
 
-SX_FLOAT sx_blas_array_norm2(const SX_INT n, const SX_FLOAT * x)
+SX_FLOAT sx_blas_array_norm2(SX_INT n, const SX_FLOAT *x)
 {
     SX_INT i;
     SX_FLOAT twonorm = 0.;
@@ -110,7 +110,7 @@ SX_FLOAT sx_blas_array_norm2(const SX_INT n, const SX_FLOAT * x)
     return sqrt(twonorm);
 }
 
-SX_FLOAT sx_blas_array_norminf(const SX_INT n, const SX_FLOAT * x)
+SX_FLOAT sx_blas_array_norminf(SX_INT n, const SX_FLOAT *x)
 {
     SX_INT i;
     SX_FLOAT infnorm = 0.0;
@@ -121,7 +121,7 @@ SX_FLOAT sx_blas_array_norminf(const SX_INT n, const SX_FLOAT * x)
 }
 
 /**
- * \fn void sx_blas_vec_axpy (const SX_FLOAT a, SX_VEC *x, SX_VEC *y)
+ * \fn void sx_blas_vec_axpy (SX_FLOAT a, const SX_VEC *x, SX_VEC *y)
  *
  * \brief y = a*x + y
  *
@@ -130,7 +130,7 @@ SX_FLOAT sx_blas_array_norminf(const SX_INT n, const SX_FLOAT * x)
  * \pars y   Pointer to SX_VEC y
  *
  */
-void sx_blas_vec_axpy(const SX_FLOAT a, SX_VEC * x, SX_VEC * y)
+void sx_blas_vec_axpy(SX_FLOAT a, const SX_VEC *x, SX_VEC *y)
 {
     SX_INT i, m = x->n;
     SX_FLOAT *xpt = x->d, *ypt = y->d;
@@ -144,7 +144,31 @@ void sx_blas_vec_axpy(const SX_FLOAT a, SX_VEC * x, SX_VEC * y)
 }
 
 /**
- * \fn void sx_blas_vec_axpyz (const SX_FLOAT a, SX_VEC *x, SX_VEC *y, SX_VEC *z) 
+ * \fn void sx_blas_vec_axpby (SX_FLOAT a, const SX_VEC *x, SX_FLOAT b, SX_VEC *y)
+ *
+ * \brief y = a * x + b * y
+ *
+ * \pars a   SX_FLOAT factor a
+ * \pars x   Pointer to SX_VEC x
+ * \pars b   SX_FLOAT factor b
+ * \pars y   Pointer to SX_VEC y
+ *
+ */
+void sx_blas_vec_axpby(SX_FLOAT a, const SX_VEC *x, SX_FLOAT b, SX_VEC *y)
+{
+    SX_INT i, m = x->n;
+    SX_FLOAT *xpt = x->d, *ypt = y->d;
+
+    if ((y->n - m) != 0) {
+        sx_printf("### ERROR: Two vectors have different dimensions!\n");
+        sx_exit_on_errcode(ERROR_DATA_STRUCTURE, __FUNCTION__);
+    }
+
+    for (i = 0; i < m; ++i) ypt[i] = a * xpt[i] + b * ypt[i];
+}
+
+/**
+ * \fn void sx_blas_vec_axpyz (SX_FLOAT a, const SX_VEC *x, const SX_VEC *y, SX_VEC *z) 
  *
  * \brief z = a*x + y, z is a third vector (z is cleared)
  *
@@ -154,7 +178,7 @@ void sx_blas_vec_axpy(const SX_FLOAT a, SX_VEC * x, SX_VEC * y)
  * \pars z   Pointer to SX_VEC z
  *
  */
-void sx_blas_vec_axpyz(const SX_FLOAT a, SX_VEC * x, SX_VEC * y, SX_VEC * z)
+void sx_blas_vec_axpyz(SX_FLOAT a, const SX_VEC *x, const SX_VEC *y, SX_VEC * z)
 {
     const SX_INT m = x->n;
     SX_FLOAT *xpt = x->d, *ypt = y->d, *zpt = z->d;
@@ -164,14 +188,42 @@ void sx_blas_vec_axpyz(const SX_FLOAT a, SX_VEC * x, SX_VEC * y, SX_VEC * z)
         sx_exit_on_errcode(ERROR_DATA_STRUCTURE, __FUNCTION__);
     }
 
-    z->n = m;
+    assert(z->n == m);
 
     memcpy(ypt, zpt, m * sizeof(SX_VEC));
     sx_blas_array_axpy(m, a, xpt, zpt);
 }
 
 /**
- * \fn SX_FLOAT sx_blas_vec_dot (SX_VEC *x, SX_VEC *y) 
+ * \fn void sx_blas_vec_axpybz (SX_FLOAT a, const SX_VEC *x, SX_FLOAT b, const SX_VEC *y, SX_VEC *z) 
+ *
+ * \brief z = a*x + b*y, z is a third vector (z is cleared)
+ *
+ * \pars a   SX_FLOAT factor a
+ * \pars x   Pointer to SX_VEC x
+ * \pars b   SX_FLOAT factor b
+ * \pars y   Pointer to SX_VEC y
+ * \pars z   Pointer to SX_VEC z
+ *
+ */
+void sx_blas_vec_axpbyz(SX_FLOAT a, const SX_VEC *x, SX_FLOAT b, const SX_VEC *y, SX_VEC * z)
+{
+    const SX_INT m = x->n;
+    SX_INT i;
+    SX_FLOAT *xpt = x->d, *ypt = y->d, *zpt = z->d;
+
+    if ((y->n - m) != 0) {
+        sx_printf("### ERROR: Two vectors have different dimensions!\n");
+        sx_exit_on_errcode(ERROR_DATA_STRUCTURE, __FUNCTION__);
+    }
+
+    assert(z->n == m);
+
+    for (i = 0; i < m; ++i) zpt[i] = a * xpt[i] + b * ypt[i];
+}
+
+/**
+ * \fn SX_FLOAT sx_blas_vec_dot(const SX_VEC *x, const SX_VEC *y) 
  *
  * \brief Inner product of two vectors (x,y)
  *
@@ -182,7 +234,7 @@ void sx_blas_vec_axpyz(const SX_FLOAT a, SX_VEC * x, SX_VEC * y, SX_VEC * z)
  *
  */
 
-SX_FLOAT sx_blas_vec_dot(SX_VEC * x, SX_VEC * y)
+SX_FLOAT sx_blas_vec_dot(const SX_VEC *x, const SX_VEC *y)
 {
     SX_FLOAT value = 0;
     SX_INT i;
@@ -195,7 +247,7 @@ SX_FLOAT sx_blas_vec_dot(SX_VEC * x, SX_VEC * y)
 }
 
 /**
- * \fn SX_FLOAT sx_blas_vec_norm2 (SX_VEC *x) 
+ * \fn SX_FLOAT sx_blas_vec_norm2 (const SX_VEC *x) 
  *
  * \brief L2 norm of SX_VEC x
  *
@@ -205,7 +257,7 @@ SX_FLOAT sx_blas_vec_dot(SX_VEC * x, SX_VEC * y)
  *
  */
 
-SX_FLOAT sx_blas_vec_norm2(SX_VEC * x)
+SX_FLOAT sx_blas_vec_norm2(const SX_VEC *x)
 {
     SX_FLOAT twonorm = 0;
     SX_INT i;
@@ -217,7 +269,7 @@ SX_FLOAT sx_blas_vec_norm2(SX_VEC * x)
     return sqrt(twonorm);
 }
 
-void sx_blas_mat_mxy(SX_MAT *A, SX_VEC *x, SX_VEC *y)
+void sx_blas_mat_mxy(const SX_MAT *A, const SX_VEC *x, SX_VEC *y)
 {
     const SX_INT m = A->num_rows;
     const SX_INT *ia = A->Ap, *ja = A->Aj;
@@ -301,7 +353,7 @@ void sx_blas_mat_mxy(SX_MAT *A, SX_VEC *x, SX_VEC *y)
     }
 }
 
-void sx_blas_mat_amxpy(const SX_FLOAT alpha, SX_MAT * A, SX_VEC *x, SX_VEC * y)
+void sx_blas_mat_amxpy(SX_FLOAT alpha, const SX_MAT *A, const SX_VEC *x, SX_VEC *y)
 {
     const SX_INT m = A->num_rows;
     const SX_INT *ia = A->Ap, *ja = A->Aj;
@@ -344,7 +396,7 @@ void sx_blas_mat_amxpy(const SX_FLOAT alpha, SX_MAT * A, SX_VEC *x, SX_VEC * y)
     }
 }
 
-SX_MAT sx_blas_mat_rap(SX_MAT * R, SX_MAT * A, SX_MAT * P)
+SX_MAT sx_blas_mat_rap(const SX_MAT *R, const SX_MAT *A, const SX_MAT *P)
 {
     SX_INT n_coarse = R->num_rows;
     SX_INT *R_i = R->Ap;

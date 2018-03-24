@@ -126,7 +126,7 @@ void sx_ivec_set(SX_IVEC *u, SX_INT m)
  * \pars y  Pointer to SX_VEC (MODIFIED)
  *
  */
-void sx_vec_cp(SX_VEC *x, SX_VEC *y)
+void sx_vec_cp(const SX_VEC *x, SX_VEC *y)
 {
     assert(x->n > 0);
 
@@ -134,7 +134,7 @@ void sx_vec_cp(SX_VEC *x, SX_VEC *y)
     memcpy(y->d, x->d, x->n * sizeof(SX_FLOAT));
 }
 
-SX_INT sx_vec_get_size(SX_VEC *v)
+SX_INT sx_vec_get_size(const SX_VEC *v)
 {
     assert(v != NULL);
 
@@ -150,7 +150,7 @@ void sx_vec_set_entry(SX_VEC *x, SX_INT index, SX_FLOAT val)
     x->d[index] = val;
 }
 
-SX_FLOAT sx_vec_get_entry(SX_VEC *x, SX_INT index)
+SX_FLOAT sx_vec_get_entry(const SX_VEC *x, SX_INT index)
 {
     assert(x != NULL);
     assert(index >= 0);
