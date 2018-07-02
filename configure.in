@@ -22,7 +22,7 @@ AC_PROG_CPP
 
 if test "$GCC" = "yes"; then
     if $CC -V 2>&1 | grep -q Intel; then
-        CFLAGS="$CFLAGS -w1"
+        CFLAGS="$CFLAGS -Wall"
     elif $CC -v 2>&1 | grep -q clang; then
         CFLAGS="$CFLAGS -Wall -Wextra -Warray-bounds"
     elif $CC -v 2>&1 | grep -q gcc; then
