@@ -26,26 +26,16 @@ libdir      = @prefix@/lib
 includedir  = @prefix@/include
 RPATH_FLAG	= @RPATH_FLAG@
 
-.c.o:
+%.o : %.c
 	${CC} ${CFLAGS} ${CPPFLAGS} -c $*.c
 	@echo
 
-.cxx.o:
+%.o : %.cxx
 	${CXX} ${CXXFLAGS} ${CPPFLAGS} -c $*.cxx
 	@echo
 
-.f.o:
+%.o : %.f
 	${FC} ${FCFLAGS} -c $*.f
-	@echo
-
-% : %.c
-	${CC} ${CFLAGS} ${CPPFLAGS} -c $*.c
-	${LINKER} ${LDFLAGS} -o $@ $*.o ${LIBS}
-	@echo
-
-% : %.cxx
-	${CXX} ${CXXFLAGS} ${CPPFLAGS} -c $*.cxx
-	${CXX} ${LDFLAGS} -o $@ $*.o ${LIBS}
 	@echo
 
 % : %.o

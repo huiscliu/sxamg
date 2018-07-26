@@ -16,8 +16,6 @@ AC_MSG_NOTICE(============================== compilers =========================
 #--------------------------------------- config files and compilers
 # Checks for programs.
 AC_PROG_CC(gcc clang icc)
-AC_PROG_CXX(g++ clang++ icpc)
-AC_PROG_FC(gfortran gfortran-mp-5 g77 f77 ifort)
 AC_PROG_CPP
 
 if test "$GCC" = "yes"; then
@@ -51,47 +49,11 @@ if test "$GCC" = "yes"; then
 
 fi
 
-if test "$GXX" = "yes"; then
-    if $CXX -V 2>&1 | grep -q Intel; then
-        CXXFLAGS="$CXXFLAGS -w1"
-    elif $CXX -v 2>&1 | grep -q clang; then
-        CXXFLAGS="$CXXFLAGS -Wno-deprecated -Wall -Wextra -Warray-bounds"
-    elif $CXX -v 2>&1 | grep -q gcc; then
-        CXXFLAGS="$CXXFLAGS -Wno-deprecated -Wall -Wextra"
-
-        for d in -Wmissing-declarations -Wunused -Wuninitialized -Wvla -Wformat -Wformat-security      \
-            -Wmain -Wsequence-point -Wshadow -Waddress -Wcomments -Wmain -Wsequence-point              \
-            -Wempty-body -Wmissing-field-initializers  -Wmaybe-uninitialized                           \
-            -Wno-return-local-addr -Wreturn-type -Wsequence-point -Wundef -Wunknown-pragmas            \
-            -Wunused-label; do
-            AC_MSG_CHECKING([whether $CXX supports $d ])
-            AC_LANG(C++)
-            CXXFLAGS_bak="$CXXFLAGS"
-            CXXFLAGS="$CXXFLAGS $d"
-            AC_COMPILE_IFELSE([AC_LANG_SOURCE([main(){}])], tmp=yes, tmp=no)
-            if test $tmp = yes; then
-                AC_MSG_RESULT(yes)
-            else
-                AC_MSG_RESULT(no)
-                CXXFLAGS="$CXXFLAGS_bak"
-            fi
-        done
-    fi
-fi
-
-# Fortran
-AC_FC_WRAPPERS
-AC_FC_LIBRARY_LDFLAGS
-
 LIBS="-L/usr/local/lib $LIBS -lm"
-
-AC_ADD_LIBS(LIBS, ${FCLIBS}, append)
 
 dnl Change relative path in compilers to full path
 AC_FULLPATH(CC)
-AC_FULLPATH(CXX)
 AC_FULLPATH(CPP)
-AC_FULLPATH(FC)
 
 # The default linker
 AC_SUBST(LINKER, "$LINKER")
