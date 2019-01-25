@@ -1,6 +1,8 @@
 # SXAMG
 
-SXAMG is an Algebraic Multigrid Solver Library. It is written by C and is serial.
+SXAMG is an Algebraic Multigrid Solver Library written by C. The initial code was from FASP
+(http://fasp.sourceforge.net/), a linear solver package that implemented Krylov solvers, preconditioners and
+AMG solvers. The SXAMG was extraced from FASP to serve as a standalone AMG solver.
 
 # How-to
 ## Configuration
