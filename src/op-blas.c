@@ -533,3 +533,102 @@ SX_MAT sx_blas_mat_rap(const SX_MAT *R, const SX_MAT *A, const SX_MAT *P)
 
     return RAP;
 }
+
+/**
+ * \fn void sx_blas_mat_mxm (const SX_MAT  *A, const SX_MAT  *B, SX_MAT *C)
+ *
+ * \brief Sparse matrix multiplication C=A*B
+ *
+ * \param A   Pointer to the dCSRmat matrix A
+ * \param B   Pointer to the dCSRmat matrix B
+ * \param C   Pointer to dCSRmat matrix equal to A*B
+ *
+ */
+void sx_blas_mat_mxm(const SX_MAT * A, const SX_MAT * B, SX_MAT * C)
+{
+    SX_INT i, j, k, l, count;
+    SX_INT countJD;
+    SX_INT *JD = (SX_INT *) sx_mem_calloc(B->num_cols, sizeof(SX_INT));
+
+    C->num_rows = A->num_rows;
+    C->num_cols = B->num_cols;
+    C->Ax = NULL;
+    C->Aj = NULL;
+    C->Ap = (SX_INT *) sx_mem_calloc(C->num_rows + 1, sizeof(SX_INT));
+
+    for (i = 0; i < B->num_cols; ++i)
+        JD[i] = -1;
+
+    // step 1: Find first the structure IA of C
+    for (i = 0; i < C->num_rows; ++i) {
+        count = 0;
+
+        for (k = A->Ap[i]; k < A->Ap[i + 1]; ++k) {
+            for (j = B->Ap[A->Aj[k]]; j < B->Ap[A->Aj[k] + 1]; ++j) {
+                for (l = 0; l < count; l++) {
+                    if (JD[l] == B->Aj[j])
+                        break;
+                }
+
+                if (l == count) {
+                    JD[count] = B->Aj[j];
+                    count++;
+                }
+            }
+        }
+        C->Ap[i + 1] = count;
+        for (j = 0; j < count; ++j) {
+            JD[j] = -1;
+        }
+    }
+
+    for (i = 0; i < C->num_rows; ++i)
+        C->Ap[i + 1] += C->Ap[i];
+
+    // step 2: Find the structure JA of C
+    C->Aj = (SX_INT *) sx_mem_calloc(C->Ap[C->num_rows], sizeof(SX_INT));
+
+    for (i = 0; i < C->num_rows; ++i) {
+        countJD = 0;
+        count = C->Ap[i];
+        for (k = A->Ap[i]; k < A->Ap[i + 1]; ++k) {
+            for (j = B->Ap[A->Aj[k]]; j < B->Ap[A->Aj[k] + 1]; ++j) {
+                for (l = 0; l < countJD; l++) {
+                    if (JD[l] == B->Aj[j])
+                        break;
+                }
+
+                if (l == countJD) {
+                    C->Aj[count] = B->Aj[j];
+                    JD[countJD] = B->Aj[j];
+                    count++;
+                    countJD++;
+                }
+            }
+        }
+
+        //for (j=0;j<countJD;++j) JD[j]=-1;
+        sx_iarray_set(countJD, JD, -1);
+    }
+
+    sx_mem_free(JD);
+    JD = NULL;
+
+    // step 3: Find the structure A of C
+    C->Ax = (SX_FLOAT *) sx_mem_calloc(C->Ap[C->num_rows], sizeof(SX_FLOAT));
+
+    for (i = 0; i < C->num_rows; ++i) {
+        for (j = C->Ap[i]; j < C->Ap[i + 1]; ++j) {
+            C->Ax[j] = 0;
+            for (k = A->Ap[i]; k < A->Ap[i + 1]; ++k) {
+                for (l = B->Ap[A->Aj[k]]; l < B->Ap[A->Aj[k] + 1]; l++) {
+                    if (B->Aj[l] == C->Aj[j]) {
+                        C->Ax[j] += A->Ax[k] * B->Ax[l];
+                    }           // end if
+                }               // end for l
+            }                   // end for k
+        }                       // end for j
+    }                           // end for i
+
+    C->num_nnzs = C->Ap[C->num_rows] - C->Ap[0];
+}

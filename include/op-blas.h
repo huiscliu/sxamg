@@ -37,8 +37,11 @@ void sx_blas_vec_axpby(SX_FLOAT a, const SX_VEC *x, SX_FLOAT b, SX_VEC *y);
 void sx_blas_mat_amxpy(SX_FLOAT a, const SX_MAT *A, const SX_VEC *x, SX_VEC *y);
 void sx_blas_mat_mxy(const SX_MAT *A, const SX_VEC *x, SX_VEC *y);
 
-/* mat-mat */
+/* mat-mat: C = RAP */
 SX_MAT sx_blas_mat_rap(const SX_MAT *R, const SX_MAT *A, const SX_MAT *P);
+
+/* mat-mat: C = AB */
+void sx_blas_mat_mxm (const SX_MAT  *A, const SX_MAT  *B, SX_MAT *C);
 
 #ifdef __cplusplus
 }
