@@ -424,12 +424,11 @@ SX_MAT sx_blas_mat_rap(const SX_MAT *R, const SX_MAT *A, const SX_MAT *P)
     SX_INT jj_cnter, jj_row_begining;
     SX_FLOAT r_entry, r_a_product, r_a_p_product;
 
-    SX_INT nthreads = 1;
-    SX_INT coarse_mul_nthreads = n_coarse * nthreads;
-    SX_INT fine_mul_nthreads = n_fine * nthreads;
-    SX_INT coarse_add_nthreads = n_coarse + nthreads;
+    SX_INT coarse_mul_nthreads = n_coarse;
+    SX_INT fine_mul_nthreads = n_fine;
+    SX_INT coarse_add_nthreads = n_coarse + 1;
     SX_INT minus_one_length = coarse_mul_nthreads + fine_mul_nthreads;
-    SX_INT total_calloc = minus_one_length + coarse_add_nthreads + nthreads;
+    SX_INT total_calloc = minus_one_length + coarse_add_nthreads + 1;
     SX_MAT RAP;
 
     Ps_marker = (SX_INT *) sx_mem_calloc(total_calloc, sizeof(SX_INT));
