@@ -39,6 +39,7 @@ void sx_blas_mat_mxy(const SX_MAT *A, const SX_VEC *x, SX_VEC *y);
 
 /* mat-mat */
 SX_MAT sx_blas_mat_rap(const SX_MAT *R, const SX_MAT *A, const SX_MAT *P);
+SX_MAT sx_blas_mat_ra(const SX_MAT *R, const SX_MAT *A);
 
 #ifdef __cplusplus
 }
