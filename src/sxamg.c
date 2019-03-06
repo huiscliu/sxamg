@@ -113,11 +113,13 @@ SX_RTN sx_solver_amg(SX_MAT *A, SX_VEC *x, SX_VEC *b, SX_AMG_PARS *pars)
 
     SX_AMG *mg;
     SX_FLOAT AMG_start, AMG_end;
-    SX_FLOAT sumb = sx_blas_vec_norm2(b);
+    SX_FLOAT sumb;
 
     assert(A != NULL);
     assert(b != NULL);
     assert(x != NULL);
+
+    sumb = sx_blas_vec_norm2(b);
 
     if (pars == NULL) {
         sx_amg_pars_init(&npars);
