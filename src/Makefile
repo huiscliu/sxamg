@@ -13,12 +13,12 @@ OBJS_C  = $(patsubst %.c,%.o,$(DIR_C))
 
 OBJS     := $(OBJS_C)
 
-lib: lib$(NLIB).a
+lib: lib$(SXAMGLIB).a
 
-lib$(NLIB).a: ${OBJS}
+lib$(SXAMGLIB).a: ${OBJS}
 	${AR} -ruv $@ $(OBJS)
 	${RANLIB} $@
-	cp -f lib$(NLIB).a ../lib/
+	cp -f lib$(SXAMGLIB).a ../lib/
 
 .PHONY: clean
 

@@ -1,4 +1,4 @@
-NLIB            = sxamg
+SXAMGLIB        = sxamg
 LIB_SUFFIX      = .a
 
 CPP	            = @CPP@
