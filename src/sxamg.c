@@ -4,18 +4,32 @@
 
 SX_RTN sx_solver_amg_solve(SX_AMG *mg, SX_VEC *x, SX_VEC *b)
 {
-    SX_MAT *ptrA = &mg[0].A;
-    SX_VEC *r = &mg[0].wp;
+    SX_MAT *ptrA;
+    SX_VEC *r;
 
-    SX_INT verb = mg->pars.verb;
-    SX_INT MaxIt = mg->pars.maxit;
-    SX_FLOAT tol = mg->pars.tol;
-    SX_FLOAT sumb = sx_blas_vec_norm2(b); // L2norm(b)
+    SX_INT verb;
+    SX_INT MaxIt;
+    SX_FLOAT tol;
+    SX_FLOAT sumb; // L2norm(b)
 
     SX_FLOAT solve_start, solve_end;
-    SX_FLOAT relres1 = 1., absres0 = sumb, absres, factor;
+    SX_FLOAT relres1 = 1., absres0, absres, factor;
     SX_INT iter = 0;
     SX_RTN rtn;
+
+    /* check pars */
+    assert(mg != NULL);
+    assert(x != NULL);
+    assert(b != NULL);
+
+    ptrA = &mg[0].A;
+    r = &mg[0].wp;
+
+    verb = mg->pars.verb;
+    MaxIt = mg->pars.maxit;
+    tol = mg->pars.tol;
+    sumb = sx_blas_vec_norm2(b); // L2norm(b)
+    absres0 = sumb;
 
     sx_gettime(&solve_start);
 
