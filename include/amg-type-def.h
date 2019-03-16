@@ -11,9 +11,9 @@
 #include "config.h"
 
 #if USE_LONG_DOUBLE
-typedef long double              SX_FLOAT;
+typedef long double              SX_FLT;
 #else
-typedef double                   SX_FLOAT;
+typedef double                   SX_FLT;
 #endif
 
 #if USE_LONG_LONG
@@ -26,13 +26,13 @@ typedef signed int               SX_INT;
 
 /**
  * \struct SX_MAT
- * \brief Sparse matrix of SX_FLOAT type in CSR format
+ * \brief Sparse matrix of SX_FLT type in CSR format
  *
- * CSR Format (Ap, Aj, Ax) in SX_FLOAT
+ * CSR Format (Ap, Aj, Ax) in SX_FLT
  *
  * \note The starting index of A is 0.
  */
-typedef struct SX_MAT
+typedef struct SX_MAT_
 {
     SX_INT num_rows;
     SX_INT num_cols;
@@ -40,7 +40,7 @@ typedef struct SX_MAT
 
     SX_INT *Ap;
     SX_INT *Aj;
-    SX_FLOAT *Ax;
+    SX_FLT *Ax;
 
 } SX_MAT;
 
@@ -52,7 +52,7 @@ typedef struct SX_MAT
  *
  * \note The starting index of A is 0.
  */
-typedef struct SX_IMAT
+typedef struct SX_IMAT_
 {
     SX_INT num_rows;
     SX_INT num_cols;
@@ -66,12 +66,12 @@ typedef struct SX_IMAT
 
 /**
  * \struct SX_VEC
- * \brief Vector with n entries of SX_FLOAT type
+ * \brief Vector with n entries of SX_FLT type
  */
-typedef struct SX_VEC 
+typedef struct SX_VEC_
 {
     SX_INT n;
-    SX_FLOAT *d;
+    SX_FLT *d;
 
 } SX_VEC;
 
@@ -79,7 +79,7 @@ typedef struct SX_VEC
  * \struct SX_IVEC
  * \brief Vector with n entries of SX_INT type
  */
-typedef struct SX_IVEC
+typedef struct SX_IVEC_
 {
     SX_INT n;
     SX_INT *d;
@@ -89,7 +89,7 @@ typedef struct SX_IVEC
 /**
  * \brief Definition of standard smoother types
  */
-typedef enum
+typedef enum SX_SM_TYPE_
 {
     SX_SM_JACOBI    = 1,  /**< Jacobi smoother */
     SX_SM_GS        = 2,  /**< Gauss-Seidel smoother */
@@ -106,7 +106,7 @@ typedef enum
 /**
  * \brief Definition of coarsening types
  */
-typedef enum
+typedef enum SX_COARSEN_TYPE_
 {
     SX_COARSE_RS      = 1,  /**< Classical */
     SX_COARSE_RSP     = 2,  /**< Classical, with positive offdiags */
@@ -116,14 +116,14 @@ typedef enum
 /**
  * \brief Definition of interpolation types
  */
-typedef enum
+typedef enum SX_INTERP_TYPE_
 {
     SX_INTERP_DIR     = 1,  /**< Direct interpolation */
     SX_INTERP_STD     = 2,  /**< Standard interpolation */
 
 } SX_INTERP_TYPE;
 
-typedef struct SX_SMTR
+typedef struct SX_SMTR_
 {
     SX_SM_TYPE smoother;
 
@@ -131,7 +131,7 @@ typedef struct SX_SMTR
     SX_VEC *b;
     SX_VEC *x;
 
-    SX_FLOAT relax;
+    SX_FLT relax;
     SX_INT nsweeps;
     SX_INT istart;
     SX_INT iend;
@@ -147,13 +147,13 @@ typedef struct SX_SMTR
  * \brief Parameters for AMG solver
  *
  */
-typedef struct SX_AMG_PARS
+typedef struct SX_AMG_PARS_
 {
     SX_INT verb;
 
     SX_INT   cycle_itr;          /** type of AMG cycle, 0, 1 is for V, others for W */
-    SX_FLOAT tol;                /** stopping tolerance for AMG solver */
-    SX_FLOAT ctol;               /** stopping tolerance for coarsest solver */
+    SX_FLT tol;                  /** stopping tolerance for AMG solver */
+    SX_FLT ctol;                 /** stopping tolerance for coarsest solver */
     SX_INT   maxit;              /** max number of iterations of AMG */
 
     SX_COARSEN_TYPE cs_type;     /** coarsening type */
@@ -161,25 +161,25 @@ typedef struct SX_AMG_PARS
     SX_INT coarse_dof;           /** max number of coarsest level DOF */
 
     SX_SM_TYPE smoother;         /** smoother type */
-    SX_FLOAT relax;              /** relax parseter for SOR smoother */
+    SX_FLT relax;                /** relax parseter for SOR smoother */
     SX_INT cf_order;             /** False: nature order True: C/F order */
     SX_INT pre_iter;             /** number of presmoothers */
     SX_INT post_iter;            /** number of postsmoothers */
     SX_INT poly_deg;             /** degree of the polynomial smoother */
 
     SX_INTERP_TYPE interp_type;  /** interpolation type */
-    SX_FLOAT strong_threshold;   /** strong connection threshold for coarsening */
-    SX_FLOAT max_row_sum;        /** maximal row sum parseter */
-    SX_FLOAT trunc_threshold;    /** truncation threshold */
+    SX_FLT strong_threshold;     /** strong connection threshold for coarsening */
+    SX_FLT max_row_sum;          /** maximal row sum parseter */
+    SX_FLT trunc_threshold;      /** truncation threshold */
 
 } SX_AMG_PARS;
 
 /* return values */
 typedef struct SX_RTN
 {
-    SX_FLOAT ares;     /* absolute residual */
-    SX_FLOAT rres;     /* relative residual */
-    SX_INT   nits;     /* number of iterations */
+    SX_FLT ares;     /* absolute residual */
+    SX_FLT rres;     /* relative residual */
+    SX_INT nits;     /* number of iterations */
 
 } SX_RTN;
 
@@ -190,25 +190,25 @@ typedef struct SX_RTN
  */ 
 typedef struct SX_AMG
 {
-    SX_INT max_levels;            /** max number of levels */
-    SX_INT num_levels;            /** number of levels in use <= max_levels */
+    SX_INT max_levels;           /** max number of levels */
+    SX_INT num_levels;           /** number of levels in use <= max_levels */
 
     SX_MAT A;                    /** pointer to the matrix at level level_num */
     SX_MAT R;                    /** restriction operator at level level_num */
     SX_MAT P;                    /** prolongation operator at level level_num */
     SX_VEC b;                    /** pointer to the right-hand side at level level_num */
     SX_VEC x;                    /** pointer to the iterative solution at level level_num */
-    SX_IVEC cfmark;               /** pointer to the CF marker at level level_num */
+    SX_IVEC cfmark;              /** pointer to the CF marker at level level_num */
 
-    SX_VEC     wp;               /** cache work space */
-    SX_RTN      rtn;              /* return values */
-    SX_AMG_PARS pars;             /* AMG parameters */
+    SX_VEC      wp;              /** cache work space */
+    SX_RTN      rtn;             /* return values */
+    SX_AMG_PARS pars;            /* AMG parameters */
 
 } SX_AMG;
 
-typedef struct SX_KRYLOV
+typedef struct SX_KRYLOV_
 {
-    SX_FLOAT tol;
+    SX_FLT tol;
     SX_MAT *A;
     SX_VEC *b;
     SX_VEC *u;

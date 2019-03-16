@@ -3,12 +3,12 @@
 #include "internal.h"
 #include <assert.h>
 
-static void Diaginv(SX_MAT *, SX_FLOAT *);
-static SX_FLOAT DinvAnorminf(SX_MAT *, SX_FLOAT *);
-static void Diagx(SX_FLOAT *, SX_INT, SX_FLOAT *, SX_FLOAT *);
+static void Diaginv(SX_MAT *, SX_FLT *);
+static SX_FLT DinvAnorminf(SX_MAT *, SX_FLT *);
+static void Diagx(SX_FLT *, SX_INT, SX_FLT *, SX_FLT *);
 
-static void Rr(SX_MAT *, SX_FLOAT *, SX_FLOAT *, SX_FLOAT *, SX_FLOAT *, SX_FLOAT *,
-        SX_FLOAT *, SX_FLOAT *, SX_INT);
+static void Rr(SX_MAT *, SX_FLT *, SX_FLT *, SX_FLT *, SX_FLT *, SX_FLT *,
+        SX_FLT *, SX_FLT *, SX_INT);
 
 /**
  * \fn void sx_amg_smoother_poly (SX_MAT *Amat, SX_VEC *brhs, SX_VEC *usol, 
@@ -29,19 +29,19 @@ static void sx_amg_smoother_poly(SX_MAT * Amat, SX_VEC * brhs, SX_VEC * usol, SX
 {
     // local variables
     SX_INT i;
-    SX_FLOAT *b = brhs->d, *u = usol->d;
-    SX_FLOAT *Dinv = NULL, *r = NULL, *rbar = NULL, *v0 = NULL, *v1 = NULL;
-    SX_FLOAT *error = NULL, *k = NULL;
-    SX_FLOAT mu0, mu1, smu0, smu1;
+    SX_FLT *b = brhs->d, *u = usol->d;
+    SX_FLT *Dinv = NULL, *r = NULL, *rbar = NULL, *v0 = NULL, *v1 = NULL;
+    SX_FLT *error = NULL, *k = NULL;
+    SX_FLT mu0, mu1, smu0, smu1;
 
     /* allocate memory */
-    Dinv = (SX_FLOAT *) sx_mem_calloc(n, sizeof(SX_FLOAT));
-    r = (SX_FLOAT *) sx_mem_calloc(n, sizeof(SX_FLOAT));
-    rbar = (SX_FLOAT *) sx_mem_calloc(n, sizeof(SX_FLOAT));
-    v0 = (SX_FLOAT *) sx_mem_calloc(n, sizeof(SX_FLOAT));
-    v1 = (SX_FLOAT *) sx_mem_calloc(n, sizeof(SX_FLOAT));
-    error = (SX_FLOAT *) sx_mem_calloc(n, sizeof(SX_FLOAT));
-    k = (SX_FLOAT *) sx_mem_calloc(6, sizeof(SX_FLOAT));    // coefficients for calculation
+    Dinv = (SX_FLT *) sx_mem_calloc(n, sizeof(SX_FLT));
+    r = (SX_FLT *) sx_mem_calloc(n, sizeof(SX_FLT));
+    rbar = (SX_FLT *) sx_mem_calloc(n, sizeof(SX_FLT));
+    v0 = (SX_FLT *) sx_mem_calloc(n, sizeof(SX_FLT));
+    v1 = (SX_FLT *) sx_mem_calloc(n, sizeof(SX_FLT));
+    error = (SX_FLT *) sx_mem_calloc(n, sizeof(SX_FLT));
+    k = (SX_FLT *) sx_mem_calloc(6, sizeof(SX_FLT));    // coefficients for calculation
 
     // get the inverse of the diagonal of A
     Diaginv(Amat, Dinv);
@@ -97,7 +97,7 @@ static void sx_amg_smoother_poly(SX_MAT * Amat, SX_VEC * brhs, SX_VEC * usol, SX
 }
 
 /**
- * \fn static void Diaginv (SX_MAT *Amat, SX_FLOAT *Dinv)
+ * \fn static void Diaginv (SX_MAT *Amat, SX_FLT *Dinv)
  *
  * \brief find the inverse of the diagonal of A
  * 
@@ -105,11 +105,11 @@ static void sx_amg_smoother_poly(SX_MAT * Amat, SX_VEC * brhs, SX_VEC * usol, SX
  * \pars Dinv vector to store the inverse of diagonal of A
  *
  */
-static void Diaginv(SX_MAT * Amat, SX_FLOAT * Dinv)
+static void Diaginv(SX_MAT * Amat, SX_FLT * Dinv)
 {
     const SX_INT n = Amat->num_rows;
     const SX_INT *ia = Amat->Ap, *ja = Amat->Aj;
-    const SX_FLOAT *a = Amat->Ax;
+    const SX_FLT *a = Amat->Ax;
     SX_INT i, j;
 
     for (i = 0; i < n; i++) {
@@ -123,7 +123,7 @@ static void Diaginv(SX_MAT * Amat, SX_FLOAT * Dinv)
 }
 
 /**
- * \fn    static SX_FLOAT DinvAnorminf(SX_MAT *Amat, SX_FLOAT *Dinv)
+ * \fn    static SX_FLT DinvAnorminf(SX_MAT *Amat, SX_FLT *Dinv)
  *
  * \brief Get the inf norm of Dinv*A
  * 
@@ -133,14 +133,14 @@ static void Diaginv(SX_MAT * Amat, SX_FLOAT * Dinv)
  * \return Inf norm of Dinv*A
  *
  */
-static SX_FLOAT DinvAnorminf(SX_MAT * Amat, SX_FLOAT * Dinv)
+static SX_FLT DinvAnorminf(SX_MAT * Amat, SX_FLT * Dinv)
 {
     //local variable
     const SX_INT n = Amat->num_rows;
     const SX_INT *ia = Amat->Ap;
-    const SX_FLOAT *a = Amat->Ax;
+    const SX_FLT *a = Amat->Ax;
     int i, j;
-    SX_FLOAT norm, temp;
+    SX_FLT norm, temp;
 
     // get the infinity norm of Dinv*A
     norm = 0.;
@@ -157,7 +157,7 @@ static SX_FLOAT DinvAnorminf(SX_MAT * Amat, SX_FLOAT * Dinv)
 }
 
 /**
- * \fn    static void Diagx(SX_FLOAT *Dinv, SX_INT n, SX_FLOAT *x, SX_FLOAT *b)
+ * \fn    static void Diagx(SX_FLT *Dinv, SX_INT n, SX_FLT *x, SX_FLT *b)
  *
  * \brief Compute b = Dinv * x;
  * 
@@ -167,7 +167,7 @@ static SX_FLOAT DinvAnorminf(SX_MAT * Amat, SX_FLOAT * Dinv)
  * \pars x     Vector 
  *
  */
-static void Diagx(SX_FLOAT * Dinv, SX_INT n, SX_FLOAT * x, SX_FLOAT * b)
+static void Diagx(SX_FLT * Dinv, SX_INT n, SX_FLT * x, SX_FLT * b)
 {
     SX_INT i;
 
@@ -179,8 +179,8 @@ static void Diagx(SX_FLOAT * Dinv, SX_INT n, SX_FLOAT * x, SX_FLOAT * b)
 }
 
 /**
- * \fn static void Rr (SX_MAT *Amat, SX_FLOAT *Dinv, SX_FLOAT *r, SX_FLOAT *rbar, 
- *                     SX_FLOAT *v0, SX_FLOAT *v1, SX_FLOAT *vnew, SX_FLOAT *k, SX_INT m)
+ * \fn static void Rr (SX_MAT *Amat, SX_FLT *Dinv, SX_FLT *r, SX_FLT *rbar, 
+ *                     SX_FLT *v0, SX_FLT *v1, SX_FLT *vnew, SX_FLT *k, SX_INT m)
  *
  * \brief Compute action R*r, where R =  q_m(Dinv*A)*Dinv;
  * 
@@ -195,8 +195,8 @@ static void Diagx(SX_FLOAT * Dinv, SX_INT n, SX_FLOAT * x, SX_FLOAT * b)
  * \pars m  degree of polynomial
  *
  */
-static void Rr(SX_MAT * Amat, SX_FLOAT * Dinv, SX_FLOAT * r, SX_FLOAT * rbar, SX_FLOAT * v0,
-        SX_FLOAT * v1, SX_FLOAT *vnew, SX_FLOAT * k, SX_INT m)
+static void Rr(SX_MAT * Amat, SX_FLT * Dinv, SX_FLT * r, SX_FLT * rbar, SX_FLT * v0,
+        SX_FLT * v1, SX_FLT *vnew, SX_FLT * k, SX_INT m)
 {
     // local variables
     const SX_INT n = Amat->num_rows;
@@ -253,14 +253,14 @@ static void sx_amg_smoother_jacobi(SX_VEC * u, const SX_INT i_1, const SX_INT i_
 {
     const SX_INT N = SX_ABS(i_n - i_1) + 1;
     const SX_INT *ia = A->Ap, *ja = A->Aj;
-    const SX_FLOAT *aj = A->Ax, *bval = b->d;
-    SX_FLOAT *uval = u->d;
-    SX_FLOAT w = 0.8;              //0.8
+    const SX_FLT *aj = A->Ax, *bval = b->d;
+    SX_FLT *uval = u->d;
+    SX_FLT w = 0.8;              //0.8
     // local variables
     SX_INT i, j, k, begin_row, end_row;
 
-    SX_FLOAT *t = (SX_FLOAT *) sx_mem_calloc(N, sizeof(SX_FLOAT));
-    SX_FLOAT *d = (SX_FLOAT *) sx_mem_calloc(N, sizeof(SX_FLOAT));
+    SX_FLT *t = (SX_FLT *) sx_mem_calloc(N, sizeof(SX_FLT));
+    SX_FLT *d = (SX_FLT *) sx_mem_calloc(N, sizeof(SX_FLT));
 
     while (L--) {
         if (s > 0) {
@@ -326,12 +326,12 @@ static void sx_amg_smoother_gs(SX_VEC * u, const SX_INT i_1, const SX_INT i_n, c
         SX_MAT *A, SX_VEC *b, SX_INT L)
 {
     const SX_INT *ia = A->Ap, *ja = A->Aj;
-    const SX_FLOAT *aj = A->Ax, *bval = b->d;
-    SX_FLOAT *uval = u->d;
+    const SX_FLT *aj = A->Ax, *bval = b->d;
+    SX_FLT *uval = u->d;
 
     // local variables
     SX_INT i, j, k, begin_row, end_row;
-    SX_FLOAT t, d = 0.0;
+    SX_FLT t, d = 0.0;
 
     if (s > 0) {
         while (L--) {
@@ -390,11 +390,11 @@ static void sx_amg_smoother_gs_cf(SX_VEC * u, SX_MAT * A, SX_VEC * b, SX_INT L, 
 {
     const SX_INT nrow = b->n;    // number of rows
     const SX_INT *ia = A->Ap, *ja = A->Aj;
-    const SX_FLOAT *aj = A->Ax, *bval = b->d;
-    SX_FLOAT *uval = u->d;
+    const SX_FLT *aj = A->Ax, *bval = b->d;
+    SX_FLT *uval = u->d;
 
     SX_INT i, j, k, begin_row, end_row;
-    SX_FLOAT t, d = 0.0;
+    SX_FLT t, d = 0.0;
 
     // F-point first, C-point second
     if (order) {
@@ -491,12 +491,12 @@ static void sx_amg_smoother_sgs(SX_VEC * u, SX_MAT * A, SX_VEC * b, SX_INT L)
 {
     const SX_INT nm1 = b->n - 1;
     const SX_INT *ia = A->Ap, *ja = A->Aj;
-    const SX_FLOAT *aj = A->Ax, *bval = b->d;
-    SX_FLOAT *uval = u->d;
+    const SX_FLT *aj = A->Ax, *bval = b->d;
+    SX_FLT *uval = u->d;
 
     // local variables
     SX_INT i, j, k, begin_row, end_row;
-    SX_FLOAT t, d = 0;
+    SX_FLT t, d = 0;
 
     while (L--) {
         // forward sweep
@@ -535,7 +535,7 @@ static void sx_amg_smoother_sgs(SX_VEC * u, SX_MAT * A, SX_VEC * b, SX_INT L)
 
 /**
  * \fn void sx_amg_smoother_sor (SX_VEC *u, const SX_INT i_1, const SX_INT i_n, const SX_INT s,
- *                                  SX_MAT *A, SX_VEC *b, SX_INT L, const SX_FLOAT w)
+ *                                  SX_MAT *A, SX_VEC *b, SX_INT L, const SX_FLT w)
  *
  * \brief SOR method as a smoother
  *
@@ -550,15 +550,15 @@ static void sx_amg_smoother_sgs(SX_VEC * u, SX_MAT * A, SX_VEC * b, SX_INT L)
  *
  */
 static void sx_amg_smoother_sor(SX_VEC * u, const SX_INT i_1, const SX_INT i_n, const SX_INT s,
-        SX_MAT *A, SX_VEC *b, SX_INT L, const SX_FLOAT w)
+        SX_MAT *A, SX_VEC *b, SX_INT L, const SX_FLT w)
 {
     const SX_INT *ia = A->Ap, *ja = A->Aj;
-    const SX_FLOAT *aj = A->Ax, *bval = b->d;
-    SX_FLOAT *uval = u->d;
+    const SX_FLT *aj = A->Ax, *bval = b->d;
+    SX_FLT *uval = u->d;
 
     // local variables
     SX_INT i, j, k, begin_row, end_row;
-    SX_FLOAT t, d = 0;
+    SX_FLT t, d = 0;
 
     while (L--) {
         if (s > 0) {
@@ -617,15 +617,15 @@ static void sx_amg_smoother_L1diag(SX_VEC * u, const SX_INT i_1, const SX_INT i_
 {
     const SX_INT N = SX_ABS(i_n - i_1) + 1;
     const SX_INT *ia = A->Ap, *ja = A->Aj;
-    const SX_FLOAT *aj = A->Ax, *bval = b->d;
-    SX_FLOAT *uval = u->d;
+    const SX_FLT *aj = A->Ax, *bval = b->d;
+    SX_FLT *uval = u->d;
 
     // local variables
     SX_INT i, j, k, begin_row, end_row;
 
     // Checks should be outside of for; t,d can be allocated before calling
-    SX_FLOAT *t = (SX_FLOAT *) sx_mem_calloc(N, sizeof(SX_FLOAT));
-    SX_FLOAT *d = (SX_FLOAT *) sx_mem_calloc(N, sizeof(SX_FLOAT));
+    SX_FLT *t = (SX_FLT *) sx_mem_calloc(N, sizeof(SX_FLT));
+    SX_FLT *d = (SX_FLT *) sx_mem_calloc(N, sizeof(SX_FLT));
 
     while (L--) {
         if (s > 0) {
@@ -685,7 +685,7 @@ void sx_amg_smoother_pre(SX_SMTR *s)
     SX_INT istart;
     SX_INT iend;
     SX_INT istep;
-    SX_FLOAT relax;
+    SX_FLT relax;
     SX_INT ndeg;
     SX_INT order;
     SX_INT *ordering;
@@ -775,7 +775,7 @@ void sx_amg_smoother_post(SX_SMTR *s)
     SX_INT istart;
     SX_INT iend;
     SX_INT istep;
-    SX_FLOAT relax;
+    SX_FLT relax;
     SX_INT ndeg;
     SX_INT order;
     SX_INT *ordering;

@@ -50,14 +50,14 @@ void sx_amg_interp_trunc(SX_MAT *P, SX_AMG_PARS *pars)
     const SX_INT row = P->num_rows;
     const SX_INT nnzold = P->num_nnzs;
     const SX_INT verb = pars->verb;
-    const SX_FLOAT eps_tr = pars->trunc_threshold;
+    const SX_FLT eps_tr = pars->trunc_threshold;
 
     // local variables
     SX_INT num_nonzero = 0;        // number of non zeros after truncation
-    SX_FLOAT Min_neg, Max_pos;     // min negative and max positive entries
-    SX_FLOAT Fac_neg, Fac_pos;     // factors for negative and positive entries
-    SX_FLOAT Sum_neg, TSum_neg;    // sum and truncated sum of negative entries
-    SX_FLOAT Sum_pos, TSum_pos;    // sum and truncated sum of positive entries
+    SX_FLT Min_neg, Max_pos;     // min negative and max positive entries
+    SX_FLT Fac_neg, Fac_pos;     // factors for negative and positive entries
+    SX_FLT Sum_neg, TSum_neg;    // sum and truncated sum of negative entries
+    SX_FLT Sum_pos, TSum_pos;    // sum and truncated sum of positive entries
 
     SX_INT index1 = 0, index2 = 0, begin, end;
     SX_INT i, j;
@@ -126,7 +126,7 @@ void sx_amg_interp_trunc(SX_MAT *P, SX_AMG_PARS *pars)
     // resize the truncated prolongation P
     P->num_nnzs = P->Ap[row] = num_nonzero;
     P->Aj = (SX_INT *) sx_mem_realloc(P->Aj, num_nonzero * sizeof(SX_INT));
-    P->Ax = (SX_FLOAT *) sx_mem_realloc(P->Ax, num_nonzero * sizeof(SX_FLOAT));
+    P->Ax = (SX_FLT *) sx_mem_realloc(P->Ax, num_nonzero * sizeof(SX_FLT));
 
     if (verb >= 4) {
         sx_printf("Truncate prolongation, nnz before: %10"dFMT", after: %10"dFMT"\n",
@@ -157,8 +157,8 @@ static void interp_DIR(SX_MAT * A, SX_IVEC * vertices, SX_MAT * P, SX_AMG_PARS *
     SX_INT i, j, k, l, index = 0, idiag;
 
     // a_minus and a_plus for Neighbors and Prolongation support
-    SX_FLOAT amN, amP, apN, apP;
-    SX_FLOAT alpha, beta, aii = 0;
+    SX_FLT amN, amP, apN, apP;
+    SX_FLT alpha, beta, aii = 0;
 
     // indices of C-nodes
     SX_INT *cindex = (SX_INT *) sx_mem_calloc(row, sizeof(SX_INT));
@@ -284,8 +284,8 @@ static void interp_STD(SX_MAT * A, SX_IVEC * vertices, SX_MAT * P, SX_IMAT * S, 
 
     // local variables
     SX_INT i, j, k, l, m, index;
-    SX_FLOAT alpha, factor, alN, alP;
-    SX_FLOAT akk, akl, aik, aki;
+    SX_FLT alpha, factor, alN, alP;
+    SX_FLT akk, akl, aik, aki;
 
     // indices for coarse neighbor node for every node
     SX_INT *cindex = (SX_INT *) sx_mem_calloc(row, sizeof(SX_INT));
@@ -297,19 +297,19 @@ static void interp_STD(SX_MAT * A, SX_IVEC * vertices, SX_MAT * P, SX_IMAT * S, 
     SX_INT *rindk = (SX_INT *) sx_mem_calloc(2 * row, sizeof(SX_INT));
 
     // sums of strongly connected C neighbors
-    SX_FLOAT *csum = (SX_FLOAT *) sx_mem_calloc(row, sizeof(SX_FLOAT));
+    SX_FLT *csum = (SX_FLT *) sx_mem_calloc(row, sizeof(SX_FLT));
 
     // sums of all neighbors except ISPT
-    SX_FLOAT *psum = (SX_FLOAT *) sx_mem_calloc(row, sizeof(SX_FLOAT));
+    SX_FLT *psum = (SX_FLT *) sx_mem_calloc(row, sizeof(SX_FLT));
 
     // sums of all neighbors
-    SX_FLOAT *nsum = (SX_FLOAT *) sx_mem_calloc(row, sizeof(SX_FLOAT));
+    SX_FLT *nsum = (SX_FLT *) sx_mem_calloc(row, sizeof(SX_FLT));
 
     // diagonal entries
-    SX_FLOAT *diag = (SX_FLOAT *) sx_mem_calloc(row, sizeof(SX_FLOAT));
+    SX_FLT *diag = (SX_FLT *) sx_mem_calloc(row, sizeof(SX_FLT));
 
     // coefficients hat a_ij for relevant CGPT of the i-th node
-    SX_FLOAT *Ahat = (SX_FLOAT *) sx_mem_calloc(row, sizeof(SX_FLOAT));
+    SX_FLT *Ahat = (SX_FLT *) sx_mem_calloc(row, sizeof(SX_FLT));
 
     // Step 0. Prepare diagonal, Cs-sum, and N-sum
     sx_iarray_set(row, cindex, -1);

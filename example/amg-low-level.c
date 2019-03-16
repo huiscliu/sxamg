@@ -26,7 +26,7 @@ static void sx_mat_read(const char *filemat, SX_MAT * A)
     nz = A->Ap[n];
     A->num_nnzs = nz;
     A->Aj = (SX_INT *) sx_mem_calloc(nz, sizeof(SX_INT));
-    A->Ax = (SX_FLOAT *) sx_mem_calloc(nz, sizeof(SX_FLOAT));
+    A->Ax = (SX_FLT *) sx_mem_calloc(nz, sizeof(SX_FLT));
 
     for (i = 0; i < nz; ++i) {
         fscanf(fp, "%"dFMT"\n", A->Aj + i);

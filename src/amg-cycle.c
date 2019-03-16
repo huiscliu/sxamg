@@ -16,9 +16,9 @@ void sx_amg_cycle(SX_AMG *mg)
     SX_INT verb = mg->pars.verb;
     SX_INT cycle_itr = mg->pars.cycle_itr;
     SX_INT nl = mg[0].num_levels;
-    SX_FLOAT tol = mg->pars.ctol;
+    SX_FLT tol = mg->pars.ctol;
 
-    SX_FLOAT alpha = 1.0;
+    SX_FLT alpha = 1.0;
     SX_INT num_lvl[MAX_AMG_LVL] = {0}, l = 0;
 
     if (tol > mg->pars.tol)  tol = mg->pars.tol * 0.1;

@@ -7,27 +7,27 @@ static SX_INT sx_solver_cg(SX_KRYLOV *ks)
     SX_MAT *A = ks->A;
     SX_VEC *b = ks->b;
     SX_VEC *u = ks->u;
-    SX_FLOAT tol = ks->tol;
+    SX_FLT tol = ks->tol;
     SX_INT maxit = ks->maxit;
     SX_INT stop_type = ks->stop_type;
     SX_INT verb = ks->verb;
 
     SX_INT MaxStag = MAX_STAG, MaxRestartStep = MAX_RESTART;
     SX_INT m = b->n;
-    SX_FLOAT maxdiff = tol * 1e-4;       // staganation tolerance
-    SX_FLOAT sol_inf_tol = SMALLFLOAT;   // infinity norm tolerance
+    SX_FLT maxdiff = tol * 1e-4;       // staganation tolerance
+    SX_FLT sol_inf_tol = SMALLFLOAT;   // infinity norm tolerance
     SX_INT iter = 0, stag = 1, more_step = 1, restart_step = 1;
-    SX_FLOAT absres0 = BIGFLOAT, absres = BIGFLOAT;
-    SX_FLOAT relres = BIGFLOAT, normu = BIGFLOAT, normr0 = BIGFLOAT;
-    SX_FLOAT reldiff, factor, infnormu;
-    SX_FLOAT alpha, beta, temp1, temp2;
+    SX_FLT absres0 = BIGFLOAT, absres = BIGFLOAT;
+    SX_FLT relres = BIGFLOAT, normu = BIGFLOAT, normr0 = BIGFLOAT;
+    SX_FLT reldiff, factor, infnormu;
+    SX_FLT alpha, beta, temp1, temp2;
 
     SX_INT iter_best = 0;              // initial best known iteration
-    SX_FLOAT absres_best = BIGFLOAT;   // initial best known residual
+    SX_FLT absres_best = BIGFLOAT;   // initial best known residual
 
-    // allocate temp memory (need 5*m SX_FLOAT numbers)
-    SX_FLOAT *work = (SX_FLOAT *) sx_mem_calloc(5 * m, sizeof(SX_FLOAT));
-    SX_FLOAT *p = work, *z = work + m, *r = z + m, *t = r + m, *u_best = t + m;
+    // allocate temp memory (need 5*m SX_FLT numbers)
+    SX_FLT *work = (SX_FLT *) sx_mem_calloc(5 * m, sizeof(SX_FLT));
+    SX_FLT *p = work, *z = work + m, *r = z + m, *t = r + m, *u_best = t + m;
     SX_VEC vr;
 
     vr.n = b->n;
@@ -286,7 +286,7 @@ static SX_INT sx_solver_gmres(SX_KRYLOV *ks)
     SX_MAT *A = ks->A;
     SX_VEC *b = ks->b;
     SX_VEC *x = ks->u;
-    SX_FLOAT tol = ks->tol;
+    SX_FLT tol = ks->tol;
     SX_INT maxit = ks->maxit;
     SX_INT restart = ks->restart;
     SX_INT stop_type = ks->stop_type;
@@ -294,33 +294,33 @@ static SX_INT sx_solver_gmres(SX_KRYLOV *ks)
 
     const SX_INT n = b->n;
     const SX_INT MIN_ITER = 0;
-    const SX_FLOAT maxdiff = tol * 1e-4;     // staganation tolerance
-    const SX_FLOAT epsmac = SMALLFLOAT;
+    const SX_FLT maxdiff = tol * 1e-4;     // staganation tolerance
+    const SX_FLT epsmac = SMALLFLOAT;
     SX_INT iter = 0;
     SX_INT restart1 = restart + 1;
     SX_INT i, j, k;
 
-    SX_FLOAT r_norm, r_normb, gamma, t;
-    SX_FLOAT normr0 = BIGFLOAT, absres = BIGFLOAT;
-    SX_FLOAT relres = BIGFLOAT, normu = BIGFLOAT;
+    SX_FLT r_norm, r_normb, gamma, t;
+    SX_FLT normr0 = BIGFLOAT, absres = BIGFLOAT;
+    SX_FLT relres = BIGFLOAT, normu = BIGFLOAT;
 
     SX_INT iter_best = 0;          // initial best known iteration
-    SX_FLOAT absres_best = BIGFLOAT;       // initial best known residual
+    SX_FLT absres_best = BIGFLOAT;       // initial best known residual
 
     // allocate temp memory (need about (restart+4)*n FLOAT numbers)
-    SX_FLOAT *c = NULL, *s = NULL, *rs = NULL;
-    SX_FLOAT *norms = NULL, *r = NULL, *w = NULL;
-    SX_FLOAT *work = NULL, *x_best = NULL;
-    SX_FLOAT **p = NULL, **hh = NULL;
+    SX_FLT *c = NULL, *s = NULL, *rs = NULL;
+    SX_FLT *norms = NULL, *r = NULL, *w = NULL;
+    SX_FLT *work = NULL, *x_best = NULL;
+    SX_FLT **p = NULL, **hh = NULL;
     SX_VEC vs, vr;
 
     /* allocate memory and setup temp work space */
-    work = (SX_FLOAT *) sx_mem_calloc((restart + 4) * (restart + n) + 1, sizeof(SX_FLOAT));
+    work = (SX_FLT *) sx_mem_calloc((restart + 4) * (restart + n) + 1, sizeof(SX_FLT));
 
     /* check whether memory is enough for GMRES */
     while ((work == NULL) && (restart > 5)) {
         restart = restart - 5;
-        work = (SX_FLOAT *) sx_mem_calloc((restart + 4) * (restart + n) + 1, sizeof(SX_FLOAT));
+        work = (SX_FLT *) sx_mem_calloc((restart + 4) * (restart + n) + 1, sizeof(SX_FLT));
         sx_printf("### WARNING: GMRES restart number set to %"dFMT"!\n", restart);
         restart1 = restart + 1;
     }
@@ -332,9 +332,9 @@ static SX_INT sx_solver_gmres(SX_KRYLOV *ks)
         exit(ERROR_ALLOC_MEM);
     }
 
-    p = (SX_FLOAT **) sx_mem_calloc(restart1, sizeof(SX_FLOAT *));
-    hh = (SX_FLOAT **) sx_mem_calloc(restart1, sizeof(SX_FLOAT *));
-    norms = (SX_FLOAT *) sx_mem_calloc(maxit + 1, sizeof(SX_FLOAT));
+    p = (SX_FLT **) sx_mem_calloc(restart1, sizeof(SX_FLT *));
+    hh = (SX_FLT **) sx_mem_calloc(restart1, sizeof(SX_FLT *));
+    norms = (SX_FLT *) sx_mem_calloc(maxit + 1, sizeof(SX_FLT));
 
     r = work;
     w = r + n;
@@ -583,7 +583,7 @@ static SX_INT sx_solver_gmres(SX_KRYLOV *ks)
 
 /**
  * \fn static void sx_amg_coarest_solve(SX_MAT *A, SX_VEC *b, SX_VEC *x,
- *                                      const SX_FLOAT ctol, const SX_INT verb)
+ *                                      const SX_FLT ctol, const SX_INT verb)
  *
  * \brief Iterative on the coarset level
  *
@@ -594,7 +594,7 @@ static SX_INT sx_solver_gmres(SX_KRYLOV *ks)
  * \pars  verb   level of output
  *
  */
-void sx_amg_coarest_solve(SX_MAT *A, SX_VEC *b, SX_VEC *x, const SX_FLOAT ctol, const SX_INT verb)
+void sx_amg_coarest_solve(SX_MAT *A, SX_VEC *b, SX_VEC *x, const SX_FLT ctol, const SX_INT verb)
 {
     const SX_INT n = A->num_rows;
     const SX_INT maxit = SX_MAX(250, SX_MIN(n * n, 1000));

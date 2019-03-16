@@ -10,7 +10,7 @@
 extern "C" {
 #endif
 
-void sx_amg_coarest_solve(SX_MAT *A, SX_VEC *b, SX_VEC *x, const SX_FLOAT ctol, const SX_INT verb);
+void sx_amg_coarest_solve(SX_MAT *A, SX_VEC *b, SX_VEC *x, const SX_FLT ctol, const SX_INT verb);
 
 #ifdef __cplusplus
 }

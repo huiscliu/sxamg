@@ -11,7 +11,7 @@ extern "C" {
 #endif
 
 SX_MAT sx_mat_struct_create(SX_INT nrow, SX_INT ncol, SX_INT nnz);
-SX_MAT sx_mat_create(SX_INT nrow, SX_INT ncol, SX_INT *Ap, SX_INT *Aj, SX_FLOAT *Ax);
+SX_MAT sx_mat_create(SX_INT nrow, SX_INT ncol, SX_INT *Ap, SX_INT *Aj, SX_FLT *Ax);
 
 void sx_mat_destroy(SX_MAT *A);
 

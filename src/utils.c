@@ -69,7 +69,7 @@ void * sx_mem_malloc(size_t size)
 
     if (mem == NULL) {
         sx_printf("### WARNING: Cannot allocate %.3"fFMTf" MB RAM!\n",
-               (SX_FLOAT) tsize / 1048576);
+               (SX_FLT) tsize / 1048576);
     }
 
     return mem;
@@ -98,7 +98,7 @@ void * sx_mem_calloc(size_t size, SX_INT type)
 
     if (mem == NULL) {
         sx_printf("### WARNING: Cannot allocate %.3"fFMTf" MB RAM!\n",
-               (SX_FLOAT) tsize / 1048576);
+               (SX_FLT) tsize / 1048576);
     }
 
     return mem;
@@ -125,7 +125,7 @@ void * sx_mem_realloc(void *oldmem, size_t tsize)
 
     if (mem == NULL) {
         sx_printf("### WARNING: Cannot allocate %.3"fFMTf"MB RAM!\n",
-               (SX_FLOAT) tsize / 1048576);
+               (SX_FLT) tsize / 1048576);
     }
 
     return mem;
@@ -147,13 +147,13 @@ void sx_mem_free(void *mem)
 }
 
 /**
- * \fn sx_gettime (SX_FLOAT *time)
+ * \fn sx_gettime (SX_FLT *time)
  *
  * \brief Get system time
  *
  */
 #if USE_UNIX
-SX_FLOAT sx_gettime(SX_FLOAT *time)
+SX_FLT sx_gettime(SX_FLT *time)
 {
     struct timeval tv;
     double t;
@@ -169,7 +169,7 @@ SX_FLOAT sx_gettime(SX_FLOAT *time)
 #else
 #include <windows.h>
 
-SX_FLOAT sx_gettime(SX_FLOAT *time)
+SX_FLT sx_gettime(SX_FLT *time)
 {
     LARGE_INTEGER timer;
     static LARGE_INTEGER fre;
@@ -286,7 +286,7 @@ void sx_exit_on_errcode(const SX_INT status, const char *fctname)
  *
  * \pars n    Number of variables
  * \pars x    Pointer to the vector
- * \pars val  Initial value for the SX_FLOAT array
+ * \pars val  Initial value for the SX_FLT array
  *
  */
 void sx_iarray_set(const SX_INT n, SX_INT *x, const SX_INT val)

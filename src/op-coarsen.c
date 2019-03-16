@@ -335,17 +335,17 @@ SX_INT sx_amg_coarsen(SX_MAT *A, SX_IVEC *vertices, SX_MAT *P, SX_IMAT *S, SX_AM
 */
 static void strong_couplings(SX_MAT *A, SX_IMAT *S, SX_AMG_PARS *pars)
 {
-    const SX_FLOAT max_row_sum = pars->max_row_sum;
-    const SX_FLOAT epsilon_str = pars->strong_threshold;
+    const SX_FLT max_row_sum = pars->max_row_sum;
+    const SX_FLT epsilon_str = pars->strong_threshold;
     const SX_INT row = A->num_rows, col = A->num_cols, row1 = row + 1;
     const SX_INT nnz = A->num_nnzs;
 
     SX_INT *ia = A->Ap, *ja = A->Aj;
-    SX_FLOAT *aj = A->Ax;
+    SX_FLT *aj = A->Ax;
 
     // local variables
     SX_INT i, j, begin_row, end_row;
-    SX_FLOAT row_scl, row_sum;
+    SX_FLT row_scl, row_sum;
 
     // get the diagonal entry of A: assume all connections are strong
     SX_VEC diag;
@@ -467,7 +467,7 @@ static void rem_positive_ff(SX_MAT *A, SX_IMAT *Stemp, SX_IVEC *vertices)
     const SX_INT row = A->num_rows;
     SX_INT *ia = A->Ap, *vec = vertices->d;
 
-    SX_FLOAT row_scl, max_entry;
+    SX_FLT row_scl, max_entry;
     SX_INT i, j, ji, max_index;
 
     for (i = 0; i < row; ++i) {
@@ -1084,7 +1084,7 @@ static void form_P_pattern_dir(SX_MAT *P, SX_IMAT *S, SX_IVEC *vertices, SX_INT 
 
     // step 2: Find the structure JA of P
     P->Aj = (SX_INT *) sx_mem_calloc(P->num_nnzs, sizeof(SX_INT));
-    P->Ax = (SX_FLOAT *) sx_mem_calloc(P->num_nnzs, sizeof(SX_FLOAT));
+    P->Ax = (SX_FLT *) sx_mem_calloc(P->num_nnzs, sizeof(SX_FLT));
 
     for (index = i = 0; i < row; ++i) {
         if (vec[i] == FGPT) {   // fine grid point
@@ -1168,7 +1168,7 @@ static void form_P_pattern_std(SX_MAT *P, SX_IMAT *S, SX_IVEC *vertices, SX_INT 
 
     // Step 2: Find the structure JA of P
     P->Aj = (SX_INT *) sx_mem_calloc(P->num_nnzs, sizeof(SX_INT));
-    P->Ax = (SX_FLOAT *) sx_mem_calloc(P->num_nnzs, sizeof(SX_FLOAT));
+    P->Ax = (SX_FLT *) sx_mem_calloc(P->num_nnzs, sizeof(SX_FLT));
 
     sx_iarray_set(row, visited, -1);  // re-init visited array
 

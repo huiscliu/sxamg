@@ -84,14 +84,14 @@ void sx_amg_complexity_print(SX_AMG *mg)
 {
     const SX_INT max_levels = mg->num_levels;
     SX_INT level;
-    SX_FLOAT gridcom = 0.0, opcom = 0.0;
+    SX_FLT gridcom = 0.0, opcom = 0.0;
 
     sx_printf("-----------------------------------------------------------\n");
     sx_printf("  Level   Num of rows   Num of nonzeros   Avg. NNZ / row   \n");
     sx_printf("-----------------------------------------------------------\n");
 
     for (level = 0; level < max_levels; ++level) {
-        SX_FLOAT AvgNNZ = (SX_FLOAT) mg[level].A.num_nnzs / mg[level].A.num_rows;
+        SX_FLT AvgNNZ = (SX_FLT) mg[level].A.num_nnzs / mg[level].A.num_rows;
 
         sx_printf("%5"dFMT" %13"dFMT" %17"dFMT" %14.2"fFMTf"\n", level, mg[level].A.num_rows,
                 mg[level].A.num_nnzs, AvgNNZ);
@@ -202,7 +202,7 @@ void sx_amg_pars_print(SX_AMG_PARS *pars)
 
 /**
  * \fn void sx_print_itinfo (const SX_INT verb, const SX_INT stop_type, const SX_INT iter,
- *                        const SX_FLOAT relres, const SX_FLOAT absres, const SX_FLOAT factor)
+ *                        const SX_FLT relres, const SX_FLT absres, const SX_FLT factor)
  *
  * \brief Print out iteration information for iterative solvers
  *
@@ -214,8 +214,8 @@ void sx_amg_pars_print(SX_AMG_PARS *pars)
  * \pars factor     Contraction factor
  *
  */
-void sx_print_itinfo(const SX_INT verb, const SX_INT stop_type, const SX_INT iter, const SX_FLOAT relres,
-        const SX_FLOAT absres, const SX_FLOAT factor)
+void sx_print_itinfo(const SX_INT verb, const SX_INT stop_type, const SX_INT iter, const SX_FLT relres,
+        const SX_FLT absres, const SX_FLT factor)
 {
     if (verb >= 2) {
 

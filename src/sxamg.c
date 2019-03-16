@@ -9,11 +9,11 @@ SX_RTN sx_solver_amg_solve(SX_AMG *mg, SX_VEC *x, SX_VEC *b)
 
     SX_INT verb;
     SX_INT MaxIt;
-    SX_FLOAT tol;
-    SX_FLOAT sumb; // L2norm(b)
+    SX_FLT tol;
+    SX_FLT sumb; // L2norm(b)
 
-    SX_FLOAT solve_start, solve_end;
-    SX_FLOAT relres1 = 1., absres0, absres, factor;
+    SX_FLT solve_start, solve_end;
+    SX_FLT relres1 = 1., absres0, absres, factor;
     SX_INT iter = 0;
     SX_RTN rtn;
 
@@ -112,8 +112,8 @@ SX_RTN sx_solver_amg(SX_MAT *A, SX_VEC *x, SX_VEC *b, SX_AMG_PARS *pars)
     SX_AMG_PARS npars;
 
     SX_AMG *mg;
-    SX_FLOAT AMG_start, AMG_end;
-    SX_FLOAT sumb;
+    SX_FLT AMG_start, AMG_end;
+    SX_FLT sumb;
 
     assert(A != NULL);
     assert(b != NULL);

@@ -5,8 +5,8 @@
 extern void sx_iarray_cp(const SX_INT n,SX_INT *x,SX_INT *y);
 extern void sx_iarray_set(const SX_INT n,SX_INT *x,const SX_INT val);
 
-extern void sx_blas_array_cp(const SX_INT n,SX_FLOAT *x,SX_FLOAT *y);
-extern void sx_blas_array_set(const SX_INT n,SX_FLOAT *x,const SX_FLOAT val);
+extern void sx_blas_array_cp(const SX_INT n,SX_FLT *x,SX_FLT *y);
+extern void sx_blas_array_set(const SX_INT n,SX_FLT *x,const SX_FLT val);
 
 /**
  * \fn SX_MAT sx_mat_struct_create (SX_INT m, SX_INT n, SX_INT nnz)
@@ -38,7 +38,7 @@ SX_MAT sx_mat_struct_create(SX_INT m, SX_INT n, SX_INT nnz)
     }
 
     if (nnz > 0) {
-        A.Ax = (SX_FLOAT *) sx_mem_calloc(nnz, sizeof(SX_FLOAT));
+        A.Ax = (SX_FLT *) sx_mem_calloc(nnz, sizeof(SX_FLT));
     }
     else {
         A.Ax = NULL;
@@ -94,7 +94,7 @@ SX_IMAT sx_imat_struct_create(SX_INT m, SX_INT n, SX_INT nnz)
     return A;
 }
 
-SX_MAT sx_mat_create(SX_INT nrow, SX_INT ncol, SX_INT *Ap, SX_INT *Aj, SX_FLOAT *Ax)
+SX_MAT sx_mat_create(SX_INT nrow, SX_INT ncol, SX_INT *Ap, SX_INT *Aj, SX_FLT *Ax)
 {
     SX_MAT A;
     SX_INT nnz;
@@ -112,7 +112,7 @@ SX_MAT sx_mat_create(SX_INT nrow, SX_INT ncol, SX_INT *Ap, SX_INT *Aj, SX_FLOAT 
 
     memcpy(A.Ap, Ap, (nrow + 1) * sizeof(SX_INT));
     memcpy(A.Aj, Aj, nnz * sizeof(SX_INT));
-    memcpy(A.Ax, Ax, nnz * sizeof(SX_FLOAT));
+    memcpy(A.Ax, Ax, nnz * sizeof(SX_FLT));
 
     return A;
 }
@@ -229,11 +229,11 @@ void sx_mat_sort(SX_MAT *A)
 
     // temp memory for sorting rows of A
     SX_INT *index, *ja;
-    SX_FLOAT *a;
+    SX_FLT *a;
 
     index = (SX_INT *) sx_mem_calloc(n, sizeof(SX_INT));
     ja = (SX_INT *) sx_mem_calloc(n, sizeof(SX_INT));
-    a = (SX_FLOAT *) sx_mem_calloc(n, sizeof(SX_FLOAT));
+    a = (SX_FLT *) sx_mem_calloc(n, sizeof(SX_FLT));
 
     for (i = 0; i < n; ++i) {
         start = A->Ap[i];
@@ -279,7 +279,7 @@ SX_VEC sx_mat_get_diag(SX_MAT *A, SX_INT n)
         n = SX_MIN(A->num_rows, A->num_cols);
 
     diag.n = n;
-    diag.d = (SX_FLOAT *) sx_mem_calloc(n, sizeof(SX_FLOAT));
+    diag.d = (SX_FLT *) sx_mem_calloc(n, sizeof(SX_FLT));
 
     for (i = 0; i < n; ++i) {
         ibegin = A->Ap[i];
@@ -432,7 +432,7 @@ SX_MAT sx_mat_trans(SX_MAT *A)
     AT.Aj = (SX_INT *) sx_mem_calloc(nnz, sizeof(SX_INT));
 
     if (A->Ax) {
-        AT.Ax = (SX_FLOAT *) sx_mem_calloc(nnz, sizeof(SX_FLOAT));
+        AT.Ax = (SX_FLT *) sx_mem_calloc(nnz, sizeof(SX_FLT));
     }
     else {
         AT.Ax = NULL;

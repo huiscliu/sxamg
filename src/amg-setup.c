@@ -11,7 +11,7 @@ SX_AMG * sx_amg_setup(SX_MAT *A, SX_AMG_PARS *pars)
     SX_INT m;
     SX_INT status = 0;
     SX_INT lvl = 0, max_lvls;
-    SX_FLOAT setup_start, setup_end;
+    SX_FLT setup_start, setup_end;
     SX_IMAT Scouple;
     SX_INT size;
     SX_AMG *mg;

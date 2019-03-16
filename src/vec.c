@@ -6,7 +6,7 @@
 /**
  * \fn SX_VEC sx_vec_create(SX_INT m)
  *
- * \brief Create SX_VEC data space of SX_FLOAT type
+ * \brief Create SX_VEC data space of SX_FLT type
  *
  * \pars m    Number of rows
  *
@@ -20,7 +20,7 @@ SX_VEC sx_vec_create(SX_INT m)
     assert(m >= 0);
 
     u.n = m;
-    u.d = (SX_FLOAT *) sx_mem_calloc(m, sizeof(SX_FLOAT));
+    u.d = (SX_FLT *) sx_mem_calloc(m, sizeof(SX_FLT));
 
     return u;
 }
@@ -50,7 +50,7 @@ SX_IVEC sx_ivec_create(SX_INT m)
 /**
  * \fn void sx_vec_destroy (SX_VEC *u)
  *
- * \brief Free vector data space of SX_FLOAT type
+ * \brief Free vector data space of SX_FLT type
  *
  * \pars u   Pointer to SX_VEC which needs to be deallocated
  *
@@ -83,7 +83,7 @@ void sx_ivec_destroy(SX_IVEC * u)
 }
 
 /**
- * \fn void sx_vec_set_value(SX_VEC *x, SX_FLOAT val)
+ * \fn void sx_vec_set_value(SX_VEC *x, SX_FLT val)
  *
  * \brief Initialize SX_VEC x[i]=val for i=0:n-1
  *
@@ -92,10 +92,10 @@ void sx_ivec_destroy(SX_IVEC * u)
  * \pars val    Initial value for the vector
  *
  */
-void sx_vec_set_value(SX_VEC *x, SX_FLOAT val)
+void sx_vec_set_value(SX_VEC *x, SX_FLT val)
 {
     SX_INT i;
-    SX_FLOAT *xpt = x->d;
+    SX_FLT *xpt = x->d;
 
     for (i = 0; i < x->n; ++i) xpt[i] = val;
 }
@@ -131,7 +131,7 @@ void sx_vec_cp(const SX_VEC *x, SX_VEC *y)
     assert(x->n > 0);
 
     y->n = x->n;
-    memcpy(y->d, x->d, x->n * sizeof(SX_FLOAT));
+    memcpy(y->d, x->d, x->n * sizeof(SX_FLT));
 }
 
 SX_INT sx_vec_get_size(const SX_VEC *v)
@@ -141,7 +141,7 @@ SX_INT sx_vec_get_size(const SX_VEC *v)
     return v->n;
 }
 
-void sx_vec_set_entry(SX_VEC *x, SX_INT index, SX_FLOAT val)
+void sx_vec_set_entry(SX_VEC *x, SX_INT index, SX_FLT val)
 {
     assert(x != NULL);
     assert(index >= 0);
@@ -150,7 +150,7 @@ void sx_vec_set_entry(SX_VEC *x, SX_INT index, SX_FLOAT val)
     x->d[index] = val;
 }
 
-SX_FLOAT sx_vec_get_entry(const SX_VEC *x, SX_INT index)
+SX_FLT sx_vec_get_entry(const SX_VEC *x, SX_INT index)
 {
     assert(x != NULL);
     assert(index >= 0);

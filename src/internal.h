@@ -79,7 +79,7 @@ extern "C" {
 #endif
 
 void sx_print_itinfo(const SX_INT ptrlvl, const SX_INT stop_type, const SX_INT iter,
-        const SX_FLOAT relres, const SX_FLOAT absres, const SX_FLOAT factor);
+        const SX_FLT relres, const SX_FLT absres, const SX_FLT factor);
 
 void sx_iarray_cp(const SX_INT n, SX_INT *x, SX_INT *y);
 void sx_iarray_set(const SX_INT n, SX_INT *x, const SX_INT val);
