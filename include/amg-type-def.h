@@ -151,10 +151,10 @@ typedef struct SX_AMG_PARS_
 {
     SX_INT verb;
 
-    SX_INT   cycle_itr;          /** type of AMG cycle, 0, 1 is for V, others for W */
+    SX_INT cycle_itr;            /** type of AMG cycle, 0, 1 is for V, others for W */
     SX_FLT tol;                  /** stopping tolerance for AMG solver */
     SX_FLT ctol;                 /** stopping tolerance for coarsest solver */
-    SX_INT   maxit;              /** max number of iterations of AMG */
+    SX_INT maxit;                /** max number of iterations of AMG */
 
     SX_COARSEN_TYPE cs_type;     /** coarsening type */
     SX_INT max_levels;           /** max number of levels of AMG */
