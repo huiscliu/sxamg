@@ -18,11 +18,9 @@ lib: lib$(SXAMGLIB).a
 lib$(SXAMGLIB).a: ${OBJS}
 	${AR} -ruv $@ $(OBJS)
 	${RANLIB} $@
-	cp -f lib$(SXAMGLIB).a ../lib/
 
 .PHONY: clean
 
 clean:
 	@rm -fv lib*.a
-	@rm -fv ../lib/lib*.a
 	@rm -fv *.o 

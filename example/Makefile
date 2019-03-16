@@ -6,8 +6,8 @@ lib:
 
 include ../Makefile.inc
 
-amg.o: amg.c ../lib/lib$(SXAMGLIB).a
-amg-low-level.o: amg-low-level.c ../lib/lib$(SXAMGLIB).a
+amg.o: amg.c ../src/lib$(SXAMGLIB).a
+amg-low-level.o: amg-low-level.c ../src/lib$(SXAMGLIB).a
 
 clean:
 	rm -f amg amg.o amg-low-level.o amg-low-level
