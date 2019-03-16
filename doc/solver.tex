@@ -131,26 +131,26 @@ typedef struct SX_AMG_PARS
 {
     SX_INT verb;
 
-    SX_INT   cycle_itr;          /** type of AMG cycle, 1 is for V, W if greater than 1 */
-    SX_FLOAT tol;                /** stopping tolerance for AMG solver */
-    SX_FLOAT ctol;               /** stopping tolerance for coarsest solver */
-    SX_INT   maxit;              /** maximal number of iterations of AMG */
+    SX_INT cycle_itr;          /** type of AMG cycle, 1 is for V, W if greater than 1 */
+    SX_FLT tol;                /** stopping tolerance for AMG solver */
+    SX_FLT ctol;               /** stopping tolerance for coarsest solver */
+    SX_INT maxit;              /** maximal number of iterations of AMG */
 
     SX_COARSEN_TYPE cs_type;     /** coarsening type */
     SX_INT max_levels;           /** max number of levels of AMG */
     SX_INT coarse_dof;           /** max number of coarsest level DOF */
 
     SX_SM_TYPE smoother;         /** smoother type */
-    SX_FLOAT   relax;            /** relax parseter for SOR smoother */
+    SX_FLT     relax;            /** relax parseter for SOR smoother */
     SX_INT     cf_order;         /** False (0): nature order, True (1): C/F order */
     SX_INT     pre_iter;         /** number of presmoothers */
     SX_INT     post_iter;        /** number of postsmoothers */
     SX_INT     poly_deg;         /** degree of the polynomial smoother */
 
     SX_INTERP_TYPE interp_type;  /** interpolation type */
-    SX_FLOAT strong_threshold;   /** strong connection threshold for coarsening */
-    SX_FLOAT max_row_sum;        /** maximal row sum parseter */
-    SX_FLOAT trunc_threshold;    /** truncation threshold */
+    SX_FLT strong_threshold;     /** strong connection threshold for coarsening */
+    SX_FLT max_row_sum;          /** maximal row sum parseter */
+    SX_FLT trunc_threshold;      /** truncation threshold */
 
 } SX_AMG_PARS;
 \end{evb}
@@ -159,9 +159,9 @@ typedef struct SX_AMG_PARS
 \begin{evb}
 typedef struct SX_RTN
 {
-    SX_FLOAT ares;     /* absolute residual */
-    SX_FLOAT rres;     /* relative residual */
-    SX_INT   nits;     /* number of iterations */
+    SX_FLT ares;     /* absolute residual */
+    SX_FLT rres;     /* relative residual */
+    SX_INT nits;     /* number of iterations */
 
 } SX_RTN;
 \end{evb}
@@ -178,7 +178,7 @@ void sx_amg_pars_init(SX_AMG_PARS *pars);
 \subsection{Setup}
 \nverb{sx_amg_setup} setups the hierarchical struture of AMG solver using given parameters.
 \begin{evb}
-SX_AMG * sx_amg_setup(SX_MAT *A, SX_AMG_PARS *pars);
+void sx_amg_setup(SX_AMG *mg, SX_MAT *A, SX_AMG_PARS *pars);
 \end{evb}
 
 \subsection{Solve}
@@ -200,6 +200,6 @@ SX_RTN sx_solver_amg(SX_MAT *A, SX_VEC *x, SX_VEC *b, SX_AMG_PARS *pars);
 \subsection{Destroy}
 \nverb{sx_amg_data_destroy} destroys the AMG object.
 \begin{evb}
-void sx_amg_data_destroy(SX_AMG **mg);
+void sx_amg_data_destroy(SX_AMG *mg);
 \end{evb}
 

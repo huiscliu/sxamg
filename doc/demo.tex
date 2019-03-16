@@ -77,7 +77,7 @@ and call step 7) in the end stage of the program.
     SX_MAT A;
     SX_VEC b, x;
     int verb = 2;
-    SX_AMG *mg;
+    SX_AMG mg;
     SX_RTN rtn;
     
     /* step 1: initialize pars */
@@ -91,7 +91,7 @@ and call step 7) in the end stage of the program.
     ....
 
     /* Step 4: setup AMG setup object */
-    mg = sx_amg_setup(&A, &pars);
+    sx_amg_setup(&mg, &A, &pars);
 
     /* Step 5: setup rhs and initial guess */
     x = sx_vec_create(A.num_rows);
@@ -101,7 +101,7 @@ and call step 7) in the end stage of the program.
     sx_vec_set_value(&b, 1.0);
 
     /* step 6: solve */
-    rtn = sx_solver_amg_solve(mg, &x, &b);
+    rtn = sx_solver_amg_solve(&mg, &x, &b);
 
     /* step 7: free memories */
     sx_mat_destroy(&A);

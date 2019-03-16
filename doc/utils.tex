@@ -36,8 +36,7 @@ void sx_mem_free(void *mem);
 
 \section{Performance}
 
-\nverb{sx_gettime} returns current time stamp, if \nverb{t} is not \nverb{NULL}, 
-result will be written to \nverb{t}.
+\nverb{sx_gettime} returns current time stamp.
 \begin{evb}
-SX_FLOAT sx_gettime(SX_FLOAT *t);
+SX_FLT sx_gettime(void);
 \end{evb}

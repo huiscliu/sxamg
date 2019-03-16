@@ -5,13 +5,13 @@ This chapter introduces basic types, matrix and vector management.
 
 \section{Data Types}
 
-\verb|SXAMG| has two data types, \verb|SX_FLOAT| and \verb|SX_INT|, for floating-point number
+\verb|SXAMG| has two data types, \verb|SX_FLT| and \verb|SX_INT|, for floating-point number
 and integer, respectively. They are defined as:
 \begin{evb}
 #if USE_LONG_DOUBLE
-typedef long double              SX_FLOAT;
+typedef long double              SX_FLT;
 #else
-typedef double                   SX_FLOAT;
+typedef double                   SX_FLT;
 #endif
 
 #if USE_LONG_LONG
@@ -40,7 +40,7 @@ typedef struct SX_MAT
 
     SX_INT   *Ap;      /* offset of each row */
     SX_INT   *Aj;      /* column indices */
-    SX_FLOAT *Ax;      /* values */
+    SX_FLT *Ax;      /* values */
 
 } SX_MAT;
 \end{evb}
@@ -58,7 +58,7 @@ SX_MAT sx_mat_struct_create(const SX_INT nrow, const SX_INT ncol, const SX_INT n
 \nverb{sx_mat_create} creates a CSR matrix by user input. This function allocates memory
 and copies values to the matrix.
 \begin{evb}
-SX_MAT sx_mat_create(SX_INT nrow, SX_INT ncol, SX_INT *Ap, SX_INT *Aj, SX_FLOAT *Ax);
+SX_MAT sx_mat_create(SX_INT nrow, SX_INT ncol, SX_INT *Ap, SX_INT *Aj, SX_FLT *Ax);
 \end{evb}
 
 \subsubsection{Destroy}
@@ -87,7 +87,7 @@ void sx_mat_sort(SX_MAT *A);
 typedef struct SX_VEC 
 {
     SX_INT   n;
-    SX_FLOAT *d;
+    SX_FLT *d;
 
 } SX_VEC;
 \end{evb}
@@ -111,18 +111,18 @@ void sx_vec_destroy(SX_VEC *u);
 
 \nverb{sx_vec_set_value} sets equal value to each component.
 \begin{evb}
-void sx_vec_set_value(SX_VEC *x, SX_FLOAT val);
+void sx_vec_set_value(SX_VEC *x, SX_FLT val);
 \end{evb}
 
 \nverb{sx_vec_set_entry} sets value: $x[i] = val$.
 \begin{evb}
-void sx_vec_set_entry(SX_VEC *x, SX_INT i, SX_FLOAT val);
+void sx_vec_set_entry(SX_VEC *x, SX_INT i, SX_FLT val);
 \end{evb}
 
 \subsubsection{Get Value}
 \nverb{sx_vec_get_entry} returns value of $x[i]$.
 \begin{evb}
-SX_FLOAT sx_vec_get_entry(const SX_VEC *x, SX_INT i);
+SX_FLT sx_vec_get_entry(const SX_VEC *x, SX_INT i);
 \end{evb}
 
 \subsubsection{Copy}
@@ -138,38 +138,38 @@ Some level 1 and level 2 BLAS operations are implemented for internal use.
 \subsection{Vector}
 \nverb{sx_blas_vec_norm2} calculates L2 norm.
 \begin{evb}
-SX_FLOAT sx_blas_vec_norm2(const SX_VEC *x);
+SX_FLT sx_blas_vec_norm2(const SX_VEC *x);
 \end{evb}
 
 \nverb{sx_blas_vec_dot} calculates dot product.
 \begin{evb}
-SX_FLOAT sx_blas_vec_dot(const SX_VEC *x, const SX_VEC *y);
+SX_FLT sx_blas_vec_dot(const SX_VEC *x, const SX_VEC *y);
 \end{evb}
 
 \nverb{sx_blas_vec_axpyz} computes: $z = a * x + y$.
 \begin{evb}
-void sx_blas_vec_axpyz(SX_FLOAT a, const SX_VEC *x, const SX_VEC *y, SX_VEC *z);
+void sx_blas_vec_axpyz(SX_FLT a, const SX_VEC *x, const SX_VEC *y, SX_VEC *z);
 \end{evb}
 
 \nverb{sx_blas_vec_axpyz} computes: $z = a * x + b * y$.
 \begin{evb}
-void sx_blas_vec_axpyz(SX_FLOAT a, const SX_VEC *x, SX_FLOAT b, const SX_VEC *y, SX_VEC *z);
+void sx_blas_vec_axpyz(SX_FLT a, const SX_VEC *x, SX_FLT b, const SX_VEC *y, SX_VEC *z);
 \end{evb}
 
 \nverb{sx_blas_vec_axpy} computes: $y = a * x + y$.
 \begin{evb}
-void sx_blas_vec_axpy(SX_FLOAT a, const SX_VEC *x, SX_VEC *y);
+void sx_blas_vec_axpy(SX_FLT a, const SX_VEC *x, SX_VEC *y);
 \end{evb}
 
 \nverb{sx_blas_vec_axpby} computes: $y = a * x + b * y$.
 \begin{evb}
-void sx_blas_vec_axpy(SX_FLOAT a, const SX_VEC *x, SX_FLOAT b, SX_VEC *y);
+void sx_blas_vec_axpy(SX_FLT a, const SX_VEC *x, SX_FLT b, SX_VEC *y);
 \end{evb}
 
 \subsection{Matrix-Vector}
 \nverb{sx_blas_mat_amxpy} computes: $ y = y + a * A * x $.
 \begin{evb}
-void sx_blas_mat_amxpy(SX_FLOAT a, const SX_MAT *A, const SX_VEC *x, SX_VEC *y);
+void sx_blas_mat_amxpy(SX_FLT a, const SX_MAT *A, const SX_VEC *x, SX_VEC *y);
 \end{evb}
 
 \nverb{sx_blas_mat_mxy} computes: $y = A * x $.
