@@ -175,13 +175,26 @@ typedef struct SX_AMG_PARS_
 } SX_AMG_PARS;
 
 /* return values */
-typedef struct SX_RTN
+typedef struct SX_RTN_
 {
     SX_FLT ares;     /* absolute residual */
     SX_FLT rres;     /* relative residual */
     SX_INT nits;     /* number of iterations */
 
 } SX_RTN;
+
+typedef struct SX_AMG_COMP_
+{
+    SX_MAT A;                    /** pointer to the matrix at level level_num */
+    SX_MAT R;                    /** restriction operator at level level_num */
+    SX_MAT P;                    /** prolongation operator at level level_num */
+    SX_VEC b;                    /** pointer to the right-hand side at level level_num */
+    SX_VEC x;                    /** pointer to the iterative solution at level level_num */
+    SX_IVEC cfmark;              /** pointer to the CF marker at level level_num */
+
+    SX_VEC wp;                   /** cache work space */
+
+} SX_AMG_COMP;
 
 /** 
  * \struct SX_AMG 
@@ -190,19 +203,12 @@ typedef struct SX_RTN
  */ 
 typedef struct SX_AMG
 {
-    SX_INT max_levels;           /** max number of levels */
-    SX_INT num_levels;           /** number of levels in use <= max_levels */
+    SX_INT num_levels;           /** number of levels */
+    SX_AMG_COMP *cg;             /* coarser grids */
 
-    SX_MAT A;                    /** pointer to the matrix at level level_num */
-    SX_MAT R;                    /** restriction operator at level level_num */
-    SX_MAT P;                    /** prolongation operator at level level_num */
-    SX_VEC b;                    /** pointer to the right-hand side at level level_num */
-    SX_VEC x;                    /** pointer to the iterative solution at level level_num */
-    SX_IVEC cfmark;              /** pointer to the CF marker at level level_num */
-
-    SX_VEC      wp;              /** cache work space */
-    SX_RTN      rtn;             /* return values */
     SX_AMG_PARS pars;            /* AMG parameters */
+
+    SX_RTN rtn;                  /* return values */
 
 } SX_AMG;
 

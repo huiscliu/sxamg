@@ -44,7 +44,7 @@ int main(void)
     SX_VEC b, x;
     char *datafile1 = "A.dat";
     int verb = 2;
-    SX_AMG *mg;
+    SX_AMG mg;
     SX_RTN rtn;
     
     /* pars */
@@ -64,7 +64,7 @@ int main(void)
     }
 
     // Step 1: AMG setup phase
-    mg = sx_amg_setup(&A, &pars);
+    sx_amg_setup(&mg, &A, &pars);
 
     // Step 2: AMG solve phase
     b = sx_vec_create(A.num_rows);
@@ -74,7 +74,7 @@ int main(void)
     sx_vec_set_value(&x, 1.0);
 
     /* solve */
-    rtn = sx_solver_amg_solve(mg, &x, &b);
+    rtn = sx_solver_amg_solve(&mg, &x, &b);
 
     sx_printf("AMG residual: %"fFMTg"\n", rtn.ares);
     sx_printf("AMG relative residual: %"fFMTg"\n", rtn.rres);

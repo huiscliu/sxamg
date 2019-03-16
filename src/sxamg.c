@@ -22,8 +22,8 @@ SX_RTN sx_solver_amg_solve(SX_AMG *mg, SX_VEC *x, SX_VEC *b)
     assert(x != NULL);
     assert(b != NULL);
 
-    ptrA = &mg[0].A;
-    r = &mg[0].wp;
+    ptrA = &mg->cg[0].A;
+    r = &mg->cg[0].wp;
 
     verb = mg->pars.verb;
     MaxIt = mg->pars.maxit;
@@ -31,7 +31,7 @@ SX_RTN sx_solver_amg_solve(SX_AMG *mg, SX_VEC *x, SX_VEC *b)
     sumb = sx_blas_vec_norm2(b); // L2norm(b)
     absres0 = sumb;
 
-    sx_gettime(&solve_start);
+    solve_start = sx_gettime();
 
     // Print iteration information if needed
     sx_print_itinfo(verb, STOP_REL_RES, iter, 1.0, sumb, 0.0);
@@ -49,8 +49,8 @@ SX_RTN sx_solver_amg_solve(SX_AMG *mg, SX_VEC *x, SX_VEC *b)
     }
 
     /* set x and b */
-    mg[0].x = *x;
-    mg[0].b = *b;
+    mg->cg[0].x = *x;
+    mg->cg[0].b = *b;
 
     // MG solver here
     while ((++iter <= MaxIt)) {
@@ -81,7 +81,7 @@ SX_RTN sx_solver_amg_solve(SX_AMG *mg, SX_VEC *x, SX_VEC *b)
     }
 
     if (verb > 0) {
-        sx_gettime(&solve_end);
+        solve_end = sx_gettime();
         sx_printf("AMG solve time: %"fFMTg" s\n", solve_end - solve_start);
     }
 
@@ -111,7 +111,7 @@ SX_RTN sx_solver_amg(SX_MAT *A, SX_VEC *x, SX_VEC *b, SX_AMG_PARS *pars)
     SX_RTN rtn;
     SX_AMG_PARS npars;
 
-    SX_AMG *mg;
+    SX_AMG mg;
     SX_FLT AMG_start, AMG_end;
     SX_FLT sumb;
 
@@ -142,7 +142,7 @@ SX_RTN sx_solver_amg(SX_MAT *A, SX_VEC *x, SX_VEC *b, SX_AMG_PARS *pars)
     m = A->num_rows;
     n = A->num_cols;
 
-    if (verb > 0) sx_gettime(&AMG_start);
+    if (verb > 0) AMG_start = sx_gettime();
 
     // check matrix data
     if (m != n) {
@@ -156,17 +156,17 @@ SX_RTN sx_solver_amg(SX_MAT *A, SX_VEC *x, SX_VEC *b, SX_AMG_PARS *pars)
     }
 
     // Step 1: AMG setup phase
-    mg = sx_amg_setup(A, pars);
+    sx_amg_setup(&mg, A, pars);
 
     // Step 2: AMG solve phase
-    rtn = sx_solver_amg_solve(mg, x, b);
+    rtn = sx_solver_amg_solve(&mg, x, b);
 
     // clean-up memory
     sx_amg_data_destroy(&mg);
 
     // print out CPU time if needed
     if (verb > 0) {
-        sx_gettime(&AMG_end);
+        AMG_end = sx_gettime();
         sx_printf("AMG totally time: %"fFMTg" s\n", AMG_end - AMG_start);
     }
 

@@ -12,8 +12,8 @@
 extern "C" {
 #endif
 
-SX_AMG * sx_amg_data_create(SX_AMG_PARS *pars);
-void sx_amg_data_destroy(SX_AMG **mg);
+SX_AMG sx_amg_data_create(SX_AMG_PARS *pars);
+void sx_amg_data_destroy(SX_AMG *mg);
 
 void sx_amg_pars_print(SX_AMG_PARS *pars);
 void sx_amg_pars_init(SX_AMG_PARS *pars);

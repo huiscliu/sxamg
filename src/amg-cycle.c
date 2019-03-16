@@ -15,7 +15,7 @@ void sx_amg_cycle(SX_AMG *mg)
 {
     SX_INT verb = mg->pars.verb;
     SX_INT cycle_itr = mg->pars.cycle_itr;
-    SX_INT nl = mg[0].num_levels;
+    SX_INT nl = mg->num_levels;
     SX_FLT tol = mg->pars.ctol;
 
     SX_FLT alpha = 1.0;
@@ -32,34 +32,34 @@ ForwardSweep:
 
         // pre-smoothing
         s.smoother = mg->pars.smoother;
-        s.A = &mg[l].A;
-        s.b = &mg[l].b;
-        s.x = &mg[l].x;
+        s.A = &mg->cg[l].A;
+        s.b = &mg->cg[l].b;
+        s.x = &mg->cg[l].x;
         s.nsweeps = mg->pars.pre_iter;
         s.istart = 0;
-        s.iend = mg[l].A.num_rows - 1;
+        s.iend = mg->cg[l].A.num_rows - 1;
         s.istep = 1;
         s.relax = mg->pars.relax;
         s.ndeg = mg->pars.poly_deg;
         s.cf_order = mg->pars.cf_order;
-        s.ordering = mg[l].cfmark.d;
+        s.ordering = mg->cg[l].cfmark.d;
 
         sx_amg_smoother_pre(&s);
 
         // form residual r = b - A x
-        sx_blas_array_cp(mg[l].A.num_rows, mg[l].b.d, mg[l].wp.d);
-        sx_blas_mat_amxpy(-1.0, &mg[l].A, &mg[l].x, &mg[l].wp);
+        sx_blas_array_cp(mg->cg[l].A.num_rows, mg->cg[l].b.d, mg->cg[l].wp.d);
+        sx_blas_mat_amxpy(-1.0, &mg->cg[l].A, &mg->cg[l].x, &mg->cg[l].wp);
 
         // restriction r1 = R*r0
-        sx_blas_mat_mxy(&mg[l].R, &mg[l].wp, &mg[l + 1].b);
+        sx_blas_mat_mxy(&mg->cg[l].R, &mg->cg[l].wp, &mg->cg[l + 1].b);
 
         // prepare for the next level
         l++;
-        sx_vec_set_value(&mg[l].x, 0.0);
+        sx_vec_set_value(&mg->cg[l].x, 0.0);
     }
 
     // call the coarse space solver:
-    sx_amg_coarest_solve(&mg[nl - 1].A, &mg[nl - 1].b, &mg[nl - 1].x, tol, verb);
+    sx_amg_coarest_solve(&mg->cg[nl - 1].A, &mg->cg[nl - 1].b, &mg->cg[nl - 1].x, tol, verb);
 
     // BackwardSweep:
     while (l > 0) {
@@ -68,21 +68,21 @@ ForwardSweep:
         l--;
 
         // prolongation u = u + alpha*P*e1
-        sx_blas_mat_amxpy(alpha, &mg[l].P, &mg[l + 1].x, &mg[l].x);
+        sx_blas_mat_amxpy(alpha, &mg->cg[l].P, &mg->cg[l + 1].x, &mg->cg[l].x);
 
         // post-smoothing
         s.smoother = mg->pars.smoother;
-        s.A = &mg[l].A;
-        s.b = &mg[l].b;
-        s.x = &mg[l].x;
+        s.A = &mg->cg[l].A;
+        s.b = &mg->cg[l].b;
+        s.x = &mg->cg[l].x;
         s.nsweeps = mg->pars.post_iter;
         s.istart = 0;
-        s.iend = mg[l].A.num_rows - 1;
+        s.iend = mg->cg[l].A.num_rows - 1;
         s.istep = -1;
         s.relax = mg->pars.relax;
         s.ndeg = mg->pars.poly_deg;
         s.cf_order = mg->pars.cf_order;
-        s.ordering = mg[l].cfmark.d;
+        s.ordering = mg->cg[l].cfmark.d;
 
         sx_amg_smoother_post(&s);
 

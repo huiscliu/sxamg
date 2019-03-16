@@ -13,24 +13,18 @@
  * \return Pointer to the SX_AMG data structure
  *
  */
-SX_AMG * sx_amg_data_create(SX_AMG_PARS *pars)
+SX_AMG sx_amg_data_create(SX_AMG_PARS *pars)
 {
-    SX_AMG *mg;
-    SX_INT i;
-    SX_INT max_levels;
+    SX_AMG mg;
 
     assert(pars != NULL);
     assert(pars->max_levels > 0);
-    max_levels = pars->max_levels;
 
-    mg = (SX_AMG *) sx_mem_calloc(max_levels, sizeof(SX_AMG));
-    for (i = 0; i < max_levels; ++i) {
-        mg[i].max_levels = max_levels;
-        mg[i].num_levels = 0;
-    }
+    bzero(&mg, sizeof(mg));
+    mg.cg = sx_mem_calloc(pars->max_levels, sizeof(*mg.cg));
 
     /* record pars */
-    mg->pars = *pars;
+    mg.pars = *pars;
 
     return mg;
 }
@@ -43,33 +37,31 @@ SX_AMG * sx_amg_data_create(SX_AMG_PARS *pars)
  * \pars mgp Pointer to pointer of SX_AMG
  *
  */
-void sx_amg_data_destroy(SX_AMG **mgp)
+void sx_amg_data_destroy(SX_AMG *mg)
 {
     SX_INT max_levels;
     SX_INT i;
-    SX_AMG *mg;
 
-    if (mgp == NULL) return;
+    if (mg == NULL) return;
 
-    mg = *mgp;
-    max_levels = SX_MAX(1, mg[0].num_levels);
+    max_levels = SX_MAX(1, mg->num_levels);
 
     for (i = 0; i < max_levels; ++i) {
-        sx_mat_destroy(&mg[i].A);
-        sx_mat_destroy(&mg[i].P);
-        sx_mat_destroy(&mg[i].R);
+        sx_mat_destroy(&mg->cg[i].A);
+        sx_mat_destroy(&mg->cg[i].P);
+        sx_mat_destroy(&mg->cg[i].R);
 
         if (i > 0) {
-            sx_vec_destroy(&mg[i].b);
-            sx_vec_destroy(&mg[i].x);
+            sx_vec_destroy(&mg->cg[i].b);
+            sx_vec_destroy(&mg->cg[i].x);
         }
 
-        sx_vec_destroy(&mg[i].wp);
-        sx_ivec_destroy(&mg[i].cfmark);
+        sx_vec_destroy(&mg->cg[i].wp);
+        sx_ivec_destroy(&mg->cg[i].cfmark);
     }
 
-    sx_mem_free(mg);
-    *mgp = NULL;
+    sx_mem_free(mg->cg);
+    bzero(mg, sizeof(*mg));
 }
 
 /**
@@ -91,19 +83,19 @@ void sx_amg_complexity_print(SX_AMG *mg)
     sx_printf("-----------------------------------------------------------\n");
 
     for (level = 0; level < max_levels; ++level) {
-        SX_FLT AvgNNZ = (SX_FLT) mg[level].A.num_nnzs / mg[level].A.num_rows;
+        SX_FLT AvgNNZ = (SX_FLT) mg->cg[level].A.num_nnzs / mg->cg[level].A.num_rows;
 
-        sx_printf("%5"dFMT" %13"dFMT" %17"dFMT" %14.2"fFMTf"\n", level, mg[level].A.num_rows,
-                mg[level].A.num_nnzs, AvgNNZ);
+        sx_printf("%5"dFMT" %13"dFMT" %17"dFMT" %14.2"fFMTf"\n", level, mg->cg[level].A.num_rows,
+                mg->cg[level].A.num_nnzs, AvgNNZ);
 
-        gridcom += mg[level].A.num_rows;
-        opcom += mg[level].A.num_nnzs;
+        gridcom += mg->cg[level].A.num_rows;
+        opcom += mg->cg[level].A.num_nnzs;
     }
 
     sx_printf("-----------------------------------------------------------\n");
 
-    gridcom /= mg[0].A.num_rows;
-    opcom /= mg[0].A.num_nnzs;
+    gridcom /= mg->cg[0].A.num_rows;
+    opcom /= mg->cg[0].A.num_nnzs;
     sx_printf("  Grid complexity = %.3"fFMTf"  |", gridcom);
     sx_printf("  Operator complexity = %.3"fFMTf"\n", opcom);
 

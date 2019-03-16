@@ -153,7 +153,7 @@ void sx_mem_free(void *mem)
  *
  */
 #if USE_UNIX
-SX_FLT sx_gettime(SX_FLT *time)
+SX_FLT sx_gettime(void)
 {
     struct timeval tv;
     double t;
@@ -161,15 +161,13 @@ SX_FLT sx_gettime(SX_FLT *time)
     gettimeofday(&tv, (struct timezone *)0);
     t = tv.tv_sec + (double)tv.tv_usec * 1e-6;
 
-    if (time != NULL) *time = t;
-
     return t;
 }
 
 #else
 #include <windows.h>
 
-SX_FLT sx_gettime(SX_FLT *time)
+SX_FLT sx_gettime()
 {
     LARGE_INTEGER timer;
     static LARGE_INTEGER fre;
@@ -184,7 +182,6 @@ SX_FLT sx_gettime(SX_FLT *time)
     QueryPerformanceCounter(&timer);
 
     t = timer.QuadPart * 1. / fre.QuadPart;
-    if (time != NULL) *time = t;
 
     return t;
 }
