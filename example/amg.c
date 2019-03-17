@@ -10,7 +10,7 @@ int main(void)
     char *mat_file = "A.dat";
     SX_RTN rtn;
     SX_INT prob = 3;
-    SX_INT ncx = 23, ncy = 33, ncz = 24;
+    SX_INT ncx = 23, ncy = 13, ncz = 14;
     SX_INT nglobal = 0;
     
     /* create distributed matrix */

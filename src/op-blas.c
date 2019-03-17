@@ -16,12 +16,7 @@ void sx_blas_array_set( SX_INT n, SX_FLT *x, SX_FLT val)
 {
     SX_INT i;
 
-    if (val == 0.0) {
-        memset(x, 0x0, sizeof(SX_FLT) * n);
-    }
-    else {
-        for (i = 0; i < n; ++i) x[i] = val;
-    }
+    for (i = 0; i < n; ++i) x[i] = val;
 }
 
 /**
@@ -43,27 +38,14 @@ void sx_blas_array_ax(SX_INT n, SX_FLT a, SX_FLT *x)
 {
     SX_INT i;
 
-    if (a == 1.0) {
-        return;
-    }
-    else {
-        for (i = 0; i < n; ++i) x[i] *= a;
-    }
+    for (i = 0; i < n; ++i) x[i] *= a;
 }
 
 void sx_blas_array_axpy(SX_INT n, SX_FLT a, const SX_FLT *x, SX_FLT *y)
 {
     SX_INT i;
 
-    if (a == 1.0) {
-        for (i = 0; i < n; ++i) y[i] += x[i];
-    }
-    else if (a == -1.0) {
-        for (i = 0; i < n; ++i) y[i] -= x[i];
-    }
-    else {
-        for (i = 0; i < n; ++i) y[i] += a * x[i];
-    }
+    for (i = 0; i < n; ++i) y[i] += a * x[i];
 }
 
 void sx_blas_array_axpyz(SX_INT n, SX_FLT a, const SX_FLT *x, const SX_FLT *y, SX_FLT *z)
@@ -180,7 +162,7 @@ void sx_blas_vec_axpby(SX_FLT a, const SX_VEC *x, SX_FLT b, SX_VEC *y)
  */
 void sx_blas_vec_axpyz(SX_FLT a, const SX_VEC *x, const SX_VEC *y, SX_VEC * z)
 {
-    const SX_INT m = x->n;
+    SX_INT m = x->n;
     SX_FLT *xpt = x->d, *ypt = y->d, *zpt = z->d;
 
     if ((y->n - m) != 0) {
@@ -208,7 +190,7 @@ void sx_blas_vec_axpyz(SX_FLT a, const SX_VEC *x, const SX_VEC *y, SX_VEC * z)
  */
 void sx_blas_vec_axpbyz(SX_FLT a, const SX_VEC *x, SX_FLT b, const SX_VEC *y, SX_VEC * z)
 {
-    const SX_INT m = x->n;
+    SX_INT m = x->n;
     SX_INT i;
     SX_FLT *xpt = x->d, *ypt = y->d, *zpt = z->d;
 
@@ -238,7 +220,7 @@ SX_FLT sx_blas_vec_dot(const SX_VEC *x, const SX_VEC *y)
 {
     SX_FLT value = 0;
     SX_INT i;
-    const SX_INT length = x->n;
+    SX_INT length = x->n;
     SX_FLT *xpt = x->d, *ypt = y->d;
 
     for (i = 0; i < length; ++i) value += xpt[i] * ypt[i];
@@ -261,7 +243,7 @@ SX_FLT sx_blas_vec_norm2(const SX_VEC *x)
 {
     SX_FLT twonorm = 0;
     SX_INT i;
-    const SX_INT length = x->n;
+    SX_INT length = x->n;
     SX_FLT *xpt = x->d;
 
     for (i = 0; i < length; ++i) twonorm += xpt[i] * xpt[i];
@@ -291,93 +273,30 @@ void sx_blas_vec_set(SX_VEC *x, SX_FLT val)
 
 void sx_blas_mv_mxy(const SX_MAT *A, const SX_VEC *x, SX_VEC *y)
 {
-    const SX_INT m = A->num_rows;
-    const SX_INT *ia = A->Ap, *ja = A->Aj;
-    const SX_FLT *aj = A->Ax;
-    SX_INT i, k, begin_row, end_row, nnz_num_row;
+    SX_INT m = A->num_rows;
+    SX_INT *ia = A->Ap, *ja = A->Aj;
+    SX_FLT *aj = A->Ax;
+    SX_INT i, k, begin_row, end_row;
     SX_FLT temp;
 
     for (i = 0; i < m; ++i) {
         temp = 0.0;
         begin_row = ia[i];
         end_row = ia[i + 1];
-        nnz_num_row = end_row - begin_row;
-        switch (nnz_num_row) {
-            case 3:
-                k = begin_row;
-                temp += aj[k] * x->d[ja[k]];
-                k++;
-                temp += aj[k] * x->d[ja[k]];
-                k++;
-                temp += aj[k] * x->d[ja[k]];
-                break;
-            case 4:
-                k = begin_row;
-                temp += aj[k] * x->d[ja[k]];
-                k++;
-                temp += aj[k] * x->d[ja[k]];
-                k++;
-                temp += aj[k] * x->d[ja[k]];
-                k++;
-                temp += aj[k] * x->d[ja[k]];
-                break;
-            case 5:
-                k = begin_row;
-                temp += aj[k] * x->d[ja[k]];
-                k++;
-                temp += aj[k] * x->d[ja[k]];
-                k++;
-                temp += aj[k] * x->d[ja[k]];
-                k++;
-                temp += aj[k] * x->d[ja[k]];
-                k++;
-                temp += aj[k] * x->d[ja[k]];
-                break;
-            case 6:
-                k = begin_row;
-                temp += aj[k] * x->d[ja[k]];
-                k++;
-                temp += aj[k] * x->d[ja[k]];
-                k++;
-                temp += aj[k] * x->d[ja[k]];
-                k++;
-                temp += aj[k] * x->d[ja[k]];
-                k++;
-                temp += aj[k] * x->d[ja[k]];
-                k++;
-                temp += aj[k] * x->d[ja[k]];
-                break;
-            case 7:
-                k = begin_row;
-                temp += aj[k] * x->d[ja[k]];
-                k++;
-                temp += aj[k] * x->d[ja[k]];
-                k++;
-                temp += aj[k] * x->d[ja[k]];
-                k++;
-                temp += aj[k] * x->d[ja[k]];
-                k++;
-                temp += aj[k] * x->d[ja[k]];
-                k++;
-                temp += aj[k] * x->d[ja[k]];
-                k++;
-                temp += aj[k] * x->d[ja[k]];
-                break;
-            default:
-                for (k = begin_row; k < end_row; ++k) {
-                    temp += aj[k] * x->d[ja[k]];
-                }
-                break;
+
+        for (k = begin_row; k < end_row; ++k) {
+            temp += aj[k] * x->d[ja[k]];
         }
+
         y->d[i] = temp;
     }
 }
 
 void sx_blas_mv_amxpy(SX_FLT alpha, const SX_MAT *A, const SX_VEC *x, SX_VEC *y)
 {
-    const SX_INT m = A->num_rows;
-    const SX_INT *ia = A->Ap, *ja = A->Aj;
-    const SX_FLT *aj = A->Ax;
+    SX_INT m = A->num_rows;
+    SX_INT *ia = A->Ap, *ja = A->Aj;
+    SX_FLT *aj = A->Ax;
     SX_INT i, k, begin_row, end_row;
     SX_FLT temp;
 
@@ -394,9 +313,9 @@ void sx_blas_mv_amxpy(SX_FLT alpha, const SX_MAT *A, const SX_VEC *x, SX_VEC *y)
 
 void sx_blas_mv_amxpby(SX_FLT alpha, const SX_MAT *A, const SX_VEC *x, SX_FLT beta, SX_VEC *y)
 {
-    const SX_INT m = A->num_rows;
-    const SX_INT *ia = A->Ap, *ja = A->Aj;
-    const SX_FLT *aj = A->Ax;
+    SX_INT m = A->num_rows;
+    SX_INT *ia = A->Ap, *ja = A->Aj;
+    SX_FLT *aj = A->Ax;
     SX_INT i, k, begin_row, end_row;
     SX_FLT temp;
 
@@ -413,9 +332,9 @@ void sx_blas_mv_amxpby(SX_FLT alpha, const SX_MAT *A, const SX_VEC *x, SX_FLT be
 
 void sx_blas_mv_amxpbyz(SX_FLT alpha, const SX_MAT *A, const SX_VEC *x, SX_FLT beta, SX_VEC *y, SX_VEC *z)
 {
-    const SX_INT m = A->num_rows;
-    const SX_INT *ia = A->Ap, *ja = A->Aj;
-    const SX_FLT *aj = A->Ax;
+    SX_INT m = A->num_rows;
+    SX_INT *ia = A->Ap, *ja = A->Aj;
+    SX_FLT *aj = A->Ax;
     SX_INT i, k, begin_row, end_row;
     SX_FLT temp;
 

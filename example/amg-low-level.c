@@ -11,7 +11,7 @@ int main(void)
     SX_AMG mg;
     SX_RTN rtn;
     SX_INT prob = 3;
-    SX_INT ncx = 23, ncy = 33, ncz = 24;
+    SX_INT ncx = 23, ncy = 13, ncz = 24;
     SX_INT nglobal = 0;
 
     /* create distributed matrix */
