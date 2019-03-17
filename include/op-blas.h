@@ -33,9 +33,15 @@ void sx_blas_vec_axpbyz(SX_FLT a, const SX_VEC *x, SX_FLT b, const SX_VEC *y, SX
 void sx_blas_vec_axpy(SX_FLT a, const SX_VEC *x, SX_VEC *y);
 void sx_blas_vec_axpby(SX_FLT a, const SX_VEC *x, SX_FLT b, SX_VEC *y);
 
+void sx_blas_vec_copy(const SX_VEC *x, SX_VEC *y);
+void sx_blas_vec_set(SX_VEC *x, SX_FLT val);
+
 /* mat-vec */
-void sx_blas_mat_amxpy(SX_FLT a, const SX_MAT *A, const SX_VEC *x, SX_VEC *y);
-void sx_blas_mat_mxy(const SX_MAT *A, const SX_VEC *x, SX_VEC *y);
+void sx_blas_mv_amxpy(SX_FLT a, const SX_MAT *A, const SX_VEC *x, SX_VEC *y);
+void sx_blas_mv_amxpby(SX_FLT a, const SX_MAT *A, const SX_VEC *x, SX_FLT b, SX_VEC *y);
+void sx_blas_mv_amxpbyz(SX_FLT a, const SX_MAT *A, const SX_VEC *x, SX_FLT b, SX_VEC *y,  SX_VEC *z);
+
+void sx_blas_mv_mxy(const SX_MAT *A, const SX_VEC *x, SX_VEC *y);
 
 /* mat-mat: C = RAP */
 SX_MAT sx_blas_mat_rap(const SX_MAT *R, const SX_MAT *A, const SX_MAT *P);

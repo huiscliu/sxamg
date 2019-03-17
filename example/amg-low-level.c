@@ -17,7 +17,7 @@ static void sx_mat_read(const char *filemat, SX_MAT * A)
     fscanf(fp, "%"dFMT"\n", &n);
     A->num_rows = n;
     A->num_cols = n;
-    A->Ap = (SX_INT *) sx_mem_calloc(n + 1, sizeof(SX_INT));
+    A->Ap = (SX_INT *) sx_calloc(n + 1, sizeof(SX_INT));
 
     for (i = 0; i <= n; ++i) {
         fscanf(fp, "%"dFMT"\n", A->Ap + i);
@@ -25,8 +25,8 @@ static void sx_mat_read(const char *filemat, SX_MAT * A)
 
     nz = A->Ap[n];
     A->num_nnzs = nz;
-    A->Aj = (SX_INT *) sx_mem_calloc(nz, sizeof(SX_INT));
-    A->Ax = (SX_FLT *) sx_mem_calloc(nz, sizeof(SX_FLT));
+    A->Aj = (SX_INT *) sx_calloc(nz, sizeof(SX_INT));
+    A->Ax = (SX_FLT *) sx_calloc(nz, sizeof(SX_FLT));
 
     for (i = 0; i < nz; ++i) {
         fscanf(fp, "%"dFMT"\n", A->Aj + i);

@@ -28,17 +28,17 @@ SX_MAT sx_mat_struct_create(SX_INT m, SX_INT n, SX_INT nnz)
     assert(n > 0);
     assert(nnz >= 0);
 
-    A.Ap = (SX_INT *) sx_mem_calloc(m + 1, sizeof(SX_INT));
+    A.Ap = (SX_INT *) sx_calloc(m + 1, sizeof(SX_INT));
 
     if (nnz > 0) {
-        A.Aj = (SX_INT *) sx_mem_calloc(nnz, sizeof(SX_INT));
+        A.Aj = (SX_INT *) sx_calloc(nnz, sizeof(SX_INT));
     }
     else {
         A.Aj = NULL;
     }
 
     if (nnz > 0) {
-        A.Ax = (SX_FLT *) sx_mem_calloc(nnz, sizeof(SX_FLT));
+        A.Ax = (SX_FLT *) sx_calloc(nnz, sizeof(SX_FLT));
     }
     else {
         A.Ax = NULL;
@@ -71,17 +71,17 @@ SX_IMAT sx_imat_struct_create(SX_INT m, SX_INT n, SX_INT nnz)
     assert(n > 0);
     assert(nnz >= 0);
 
-    A.Ap = (SX_INT *) sx_mem_calloc(m + 1, sizeof(SX_INT));
+    A.Ap = (SX_INT *) sx_calloc(m + 1, sizeof(SX_INT));
 
     if (nnz > 0) {
-        A.Aj = (SX_INT *) sx_mem_calloc(nnz, sizeof(SX_INT));
+        A.Aj = (SX_INT *) sx_calloc(nnz, sizeof(SX_INT));
     }
     else {
         A.Aj = NULL;
     }
 
     if (nnz > 0) {
-        A.Ax = (SX_INT *) sx_mem_calloc(nnz, sizeof(SX_INT));
+        A.Ax = (SX_INT *) sx_calloc(nnz, sizeof(SX_INT));
     }
     else {
         A.Ax = NULL;
@@ -129,13 +129,13 @@ void sx_mat_destroy(SX_MAT *A)
 {
     if (A == NULL) return;
 
-    sx_mem_free(A->Ap);
+    sx_free(A->Ap);
     A->Ap = NULL;
 
-    sx_mem_free(A->Aj);
+    sx_free(A->Aj);
     A->Aj = NULL;
 
-    sx_mem_free(A->Ax);
+    sx_free(A->Ax);
     A->Ax = NULL;
 }
 
@@ -151,13 +151,13 @@ void sx_imat_destroy(SX_IMAT *A)
 {
     if (A == NULL) return;
 
-    sx_mem_free(A->Ap);
+    sx_free(A->Ap);
     A->Ap = NULL;
 
-    sx_mem_free(A->Aj);
+    sx_free(A->Aj);
     A->Aj = NULL;
 
-    sx_mem_free(A->Ax);
+    sx_free(A->Ax);
     A->Ax = NULL;
 }
 
@@ -231,9 +231,9 @@ void sx_mat_sort(SX_MAT *A)
     SX_INT *index, *ja;
     SX_FLT *a;
 
-    index = (SX_INT *) sx_mem_calloc(n, sizeof(SX_INT));
-    ja = (SX_INT *) sx_mem_calloc(n, sizeof(SX_INT));
-    a = (SX_FLT *) sx_mem_calloc(n, sizeof(SX_FLT));
+    index = (SX_INT *) sx_calloc(n, sizeof(SX_INT));
+    ja = (SX_INT *) sx_calloc(n, sizeof(SX_INT));
+    a = (SX_FLT *) sx_calloc(n, sizeof(SX_FLT));
 
     for (i = 0; i < n; ++i) {
         start = A->Ap[i];
@@ -256,9 +256,9 @@ void sx_mat_sort(SX_MAT *A)
     }
 
     // clean up memory
-    sx_mem_free(index);
-    sx_mem_free(ja);
-    sx_mem_free(a);
+    sx_free(index);
+    sx_free(ja);
+    sx_free(a);
 }
 
 /**
@@ -279,7 +279,7 @@ SX_VEC sx_mat_get_diag(SX_MAT *A, SX_INT n)
         n = SX_MIN(A->num_rows, A->num_cols);
 
     diag.n = n;
-    diag.d = (SX_FLT *) sx_mem_calloc(n, sizeof(SX_FLT));
+    diag.d = (SX_FLT *) sx_calloc(n, sizeof(SX_FLT));
 
     for (i = 0; i < n; ++i) {
         ibegin = A->Ap[i];
@@ -359,12 +359,12 @@ SX_IMAT sx_imat_trans(SX_IMAT *A)
     AT.num_cols = n;
     AT.num_nnzs = nnz;
 
-    AT.Ap = (SX_INT *) sx_mem_calloc(m + 1, sizeof(SX_INT));
+    AT.Ap = (SX_INT *) sx_calloc(m + 1, sizeof(SX_INT));
 
-    AT.Aj = (SX_INT *) sx_mem_calloc(nnz, sizeof(SX_INT));
+    AT.Aj = (SX_INT *) sx_calloc(nnz, sizeof(SX_INT));
 
     if (A->Ax) {
-        AT.Ax = (SX_INT *) sx_mem_calloc(nnz, sizeof(SX_INT));
+        AT.Ax = (SX_INT *) sx_calloc(nnz, sizeof(SX_INT));
     }
     else {
         AT.Ax = NULL;
@@ -428,11 +428,11 @@ SX_MAT sx_mat_trans(SX_MAT *A)
     AT.num_cols = n;
     AT.num_nnzs = nnz;
 
-    AT.Ap = (SX_INT *) sx_mem_calloc(m + 1, sizeof(SX_INT));
-    AT.Aj = (SX_INT *) sx_mem_calloc(nnz, sizeof(SX_INT));
+    AT.Ap = (SX_INT *) sx_calloc(m + 1, sizeof(SX_INT));
+    AT.Aj = (SX_INT *) sx_calloc(nnz, sizeof(SX_INT));
 
     if (A->Ax) {
-        AT.Ax = (SX_FLT *) sx_mem_calloc(nnz, sizeof(SX_FLT));
+        AT.Ax = (SX_FLT *) sx_calloc(nnz, sizeof(SX_FLT));
     }
     else {
         AT.Ax = NULL;

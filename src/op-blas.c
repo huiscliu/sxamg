@@ -269,7 +269,27 @@ SX_FLT sx_blas_vec_norm2(const SX_VEC *x)
     return sqrt(twonorm);
 }
 
-void sx_blas_mat_mxy(const SX_MAT *A, const SX_VEC *x, SX_VEC *y)
+void sx_blas_vec_copy(const SX_VEC *x, SX_VEC *y)
+{
+    assert(x != NULL);
+    assert(y != NULL);
+    assert(x->n == y->n);
+    assert(x->n >= 0);
+
+    memcpy(y->d, x->d, x->n * sizeof(*x->d));
+}
+
+void sx_blas_vec_set(SX_VEC *x, SX_FLT val)
+{
+    int i;
+
+    assert(x != NULL);
+    assert(x->n >= 0);
+
+    for (i = 0; i < x->n; i++) x->d[i] = val;
+}
+
+void sx_blas_mv_mxy(const SX_MAT *A, const SX_VEC *x, SX_VEC *y)
 {
     const SX_INT m = A->num_rows;
     const SX_INT *ia = A->Ap, *ja = A->Aj;
@@ -353,7 +373,7 @@ void sx_blas_mat_mxy(const SX_MAT *A, const SX_VEC *x, SX_VEC *y)
     }
 }
 
-void sx_blas_mat_amxpy(SX_FLT alpha, const SX_MAT *A, const SX_VEC *x, SX_VEC *y)
+void sx_blas_mv_amxpy(SX_FLT alpha, const SX_MAT *A, const SX_VEC *x, SX_VEC *y)
 {
     const SX_INT m = A->num_rows;
     const SX_INT *ia = A->Ap, *ja = A->Aj;
@@ -361,38 +381,52 @@ void sx_blas_mat_amxpy(SX_FLT alpha, const SX_MAT *A, const SX_VEC *x, SX_VEC *y
     SX_INT i, k, begin_row, end_row;
     SX_FLT temp;
 
-    if (alpha == 1.0) {
-        for (i = 0; i < m; ++i) {
-            temp = 0.0;
-            begin_row = ia[i];
-            end_row = ia[i + 1];
+    for (i = 0; i < m; ++i) {
+        temp = 0.0;
+        begin_row = ia[i];
+        end_row = ia[i + 1];
 
-            for (k = begin_row; k < end_row; ++k) temp += aj[k] * x->d[ja[k]];
+        for (k = begin_row; k < end_row; ++k) temp += aj[k] * x->d[ja[k]];
 
-            y->d[i] += temp;
-        }
+        y->d[i] += temp * alpha;
     }
-    else if (alpha == -1.0) {
-        for (i = 0; i < m; ++i) {
-            temp = 0.0;
-            begin_row = ia[i];
-            end_row = ia[i + 1];
+}
 
-            for (k = begin_row; k < end_row; ++k) temp += aj[k] * x->d[ja[k]];
+void sx_blas_mv_amxpby(SX_FLT alpha, const SX_MAT *A, const SX_VEC *x, SX_FLT beta, SX_VEC *y)
+{
+    const SX_INT m = A->num_rows;
+    const SX_INT *ia = A->Ap, *ja = A->Aj;
+    const SX_FLT *aj = A->Ax;
+    SX_INT i, k, begin_row, end_row;
+    SX_FLT temp;
 
-            y->d[i] -= temp;
-        }
+    for (i = 0; i < m; ++i) {
+        temp = 0.0;
+        begin_row = ia[i];
+        end_row = ia[i + 1];
+
+        for (k = begin_row; k < end_row; ++k) temp += aj[k] * x->d[ja[k]];
+
+        y->d[i] = temp * alpha + y->d[i] * beta;
     }
-    else {
-        for (i = 0; i < m; ++i) {
-            temp = 0.0;
-            begin_row = ia[i];
-            end_row = ia[i + 1];
+}
 
-            for (k = begin_row; k < end_row; ++k) temp += aj[k] * x->d[ja[k]];
+void sx_blas_mv_amxpbyz(SX_FLT alpha, const SX_MAT *A, const SX_VEC *x, SX_FLT beta, SX_VEC *y, SX_VEC *z)
+{
+    const SX_INT m = A->num_rows;
+    const SX_INT *ia = A->Ap, *ja = A->Aj;
+    const SX_FLT *aj = A->Ax;
+    SX_INT i, k, begin_row, end_row;
+    SX_FLT temp;
 
-            y->d[i] += temp * alpha;
-        }
+    for (i = 0; i < m; ++i) {
+        temp = 0.0;
+        begin_row = ia[i];
+        end_row = ia[i + 1];
+
+        for (k = begin_row; k < end_row; ++k) temp += aj[k] * x->d[ja[k]];
+
+        z->d[i] = temp * alpha + y->d[i] * beta;
     }
 }
 
@@ -431,13 +465,13 @@ SX_MAT sx_blas_mat_rap(const SX_MAT *R, const SX_MAT *A, const SX_MAT *P)
     SX_INT total_calloc = minus_one_length + coarse_add + 1;
     SX_MAT RAP;
 
-    Ps_marker = (SX_INT *) sx_mem_calloc(total_calloc, sizeof(SX_INT));
+    Ps_marker = (SX_INT *) sx_calloc(total_calloc, sizeof(SX_INT));
     As_marker = Ps_marker + coarse_mul;
 
     /*------------------------------------------------------*
      *  First Pass: Determine size of RAP and set up RAP_p  *
      *------------------------------------------------------*/
-    RAP_p = (SX_INT *) sx_mem_calloc(n_coarse + 1, sizeof(SX_INT));
+    RAP_p = (SX_INT *) sx_calloc(n_coarse + 1, sizeof(SX_INT));
 
     sx_iarray_set(minus_one_length, Ps_marker, -1);
 
@@ -471,8 +505,8 @@ SX_MAT sx_blas_mat_rap(const SX_MAT *R, const SX_MAT *A, const SX_MAT *P)
     RAP_p[n_coarse] = jj_cnter;
     RAP_size = jj_cnter;
 
-    RAP_j = (SX_INT *) sx_mem_calloc(RAP_size, sizeof(SX_INT));
-    RAP_x = (SX_FLT *) sx_mem_calloc(RAP_size, sizeof(SX_FLT));
+    RAP_j = (SX_INT *) sx_calloc(RAP_size, sizeof(SX_INT));
+    RAP_x = (SX_FLT *) sx_calloc(RAP_size, sizeof(SX_FLT));
 
     sx_iarray_set(minus_one_length, Ps_marker, -1);
 
@@ -529,7 +563,7 @@ SX_MAT sx_blas_mat_rap(const SX_MAT *R, const SX_MAT *A, const SX_MAT *P)
     RAP.Aj = RAP_j;
     RAP.Ax = RAP_x;
 
-    sx_mem_free(Ps_marker);
+    sx_free(Ps_marker);
 
     return RAP;
 }
@@ -548,13 +582,13 @@ void sx_blas_mat_mxm(const SX_MAT * A, const SX_MAT * B, SX_MAT * C)
 {
     SX_INT i, j, k, l, count;
     SX_INT countJD;
-    SX_INT *JD = (SX_INT *) sx_mem_calloc(B->num_cols, sizeof(SX_INT));
+    SX_INT *JD = (SX_INT *) sx_calloc(B->num_cols, sizeof(SX_INT));
 
     C->num_rows = A->num_rows;
     C->num_cols = B->num_cols;
     C->Ax = NULL;
     C->Aj = NULL;
-    C->Ap = (SX_INT *) sx_mem_calloc(C->num_rows + 1, sizeof(SX_INT));
+    C->Ap = (SX_INT *) sx_calloc(C->num_rows + 1, sizeof(SX_INT));
 
     for (i = 0; i < B->num_cols; ++i)
         JD[i] = -1;
@@ -586,7 +620,7 @@ void sx_blas_mat_mxm(const SX_MAT * A, const SX_MAT * B, SX_MAT * C)
         C->Ap[i + 1] += C->Ap[i];
 
     // step 2: Find the structure JA of C
-    C->Aj = (SX_INT *) sx_mem_calloc(C->Ap[C->num_rows], sizeof(SX_INT));
+    C->Aj = (SX_INT *) sx_calloc(C->Ap[C->num_rows], sizeof(SX_INT));
 
     for (i = 0; i < C->num_rows; ++i) {
         countJD = 0;
@@ -611,11 +645,11 @@ void sx_blas_mat_mxm(const SX_MAT * A, const SX_MAT * B, SX_MAT * C)
         sx_iarray_set(countJD, JD, -1);
     }
 
-    sx_mem_free(JD);
+    sx_free(JD);
     JD = NULL;
 
     // step 3: Find the structure A of C
-    C->Ax = (SX_FLT *) sx_mem_calloc(C->Ap[C->num_rows], sizeof(SX_FLT));
+    C->Ax = (SX_FLT *) sx_calloc(C->Ap[C->num_rows], sizeof(SX_FLT));
 
     for (i = 0; i < C->num_rows; ++i) {
         for (j = C->Ap[i]; j < C->Ap[i + 1]; ++j) {

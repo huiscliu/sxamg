@@ -125,8 +125,8 @@ void sx_amg_interp_trunc(SX_MAT *P, SX_AMG_PARS *pars)
 
     // resize the truncated prolongation P
     P->num_nnzs = P->Ap[row] = num_nonzero;
-    P->Aj = (SX_INT *) sx_mem_realloc(P->Aj, num_nonzero * sizeof(SX_INT));
-    P->Ax = (SX_FLT *) sx_mem_realloc(P->Ax, num_nonzero * sizeof(SX_FLT));
+    P->Aj = (SX_INT *) sx_realloc(P->Aj, num_nonzero * sizeof(SX_INT));
+    P->Ax = (SX_FLT *) sx_realloc(P->Ax, num_nonzero * sizeof(SX_FLT));
 
     if (verb >= 4) {
         sx_printf("Truncate prolongation, nnz before: %10"dFMT", after: %10"dFMT"\n",
@@ -161,7 +161,7 @@ static void interp_DIR(SX_MAT * A, SX_IVEC * vertices, SX_MAT * P, SX_AMG_PARS *
     SX_FLT alpha, beta, aii = 0;
 
     // indices of C-nodes
-    SX_INT *cindex = (SX_INT *) sx_mem_calloc(row, sizeof(SX_INT));
+    SX_INT *cindex = (SX_INT *) sx_calloc(row, sizeof(SX_INT));
 
     // Step 1. Fill in values for interpolation operator P
     for (i = 0; i < row; ++i) {
@@ -258,7 +258,7 @@ static void interp_DIR(SX_MAT * A, SX_IVEC * vertices, SX_MAT * P, SX_AMG_PARS *
     }
 
     // clean up
-    sx_mem_free(cindex);
+    sx_free(cindex);
 
     // Step 3. Truncate the prolongation operator to reduce cost
     sx_amg_interp_trunc(P, pars);
@@ -288,28 +288,28 @@ static void interp_STD(SX_MAT * A, SX_IVEC * vertices, SX_MAT * P, SX_IMAT * S, 
     SX_FLT akk, akl, aik, aki;
 
     // indices for coarse neighbor node for every node
-    SX_INT *cindex = (SX_INT *) sx_mem_calloc(row, sizeof(SX_INT));
+    SX_INT *cindex = (SX_INT *) sx_calloc(row, sizeof(SX_INT));
 
     // indices from column number to index in nonzeros in i-th row
-    SX_INT *rindi = (SX_INT *) sx_mem_calloc(2 * row, sizeof(SX_INT));
+    SX_INT *rindi = (SX_INT *) sx_calloc(2 * row, sizeof(SX_INT));
 
     // indices from column number to index in nonzeros in k-th row
-    SX_INT *rindk = (SX_INT *) sx_mem_calloc(2 * row, sizeof(SX_INT));
+    SX_INT *rindk = (SX_INT *) sx_calloc(2 * row, sizeof(SX_INT));
 
     // sums of strongly connected C neighbors
-    SX_FLT *csum = (SX_FLT *) sx_mem_calloc(row, sizeof(SX_FLT));
+    SX_FLT *csum = (SX_FLT *) sx_calloc(row, sizeof(SX_FLT));
 
     // sums of all neighbors except ISPT
-    SX_FLT *psum = (SX_FLT *) sx_mem_calloc(row, sizeof(SX_FLT));
+    SX_FLT *psum = (SX_FLT *) sx_calloc(row, sizeof(SX_FLT));
 
     // sums of all neighbors
-    SX_FLT *nsum = (SX_FLT *) sx_mem_calloc(row, sizeof(SX_FLT));
+    SX_FLT *nsum = (SX_FLT *) sx_calloc(row, sizeof(SX_FLT));
 
     // diagonal entries
-    SX_FLT *diag = (SX_FLT *) sx_mem_calloc(row, sizeof(SX_FLT));
+    SX_FLT *diag = (SX_FLT *) sx_calloc(row, sizeof(SX_FLT));
 
     // coefficients hat a_ij for relevant CGPT of the i-th node
-    SX_FLT *Ahat = (SX_FLT *) sx_mem_calloc(row, sizeof(SX_FLT));
+    SX_FLT *Ahat = (SX_FLT *) sx_calloc(row, sizeof(SX_FLT));
 
     // Step 0. Prepare diagonal, Cs-sum, and N-sum
     sx_iarray_set(row, cindex, -1);
@@ -421,15 +421,15 @@ static void interp_STD(SX_MAT * A, SX_IVEC * vertices, SX_MAT * P, SX_IMAT * S, 
     }
 
     // clean up
-    sx_mem_free(cindex);
-    sx_mem_free(rindi);
-    sx_mem_free(rindk);
-    sx_mem_free(nsum);
+    sx_free(cindex);
+    sx_free(rindi);
+    sx_free(rindk);
+    sx_free(nsum);
 
-    sx_mem_free(psum);
-    sx_mem_free(csum);
-    sx_mem_free(diag);
-    sx_mem_free(Ahat);
+    sx_free(psum);
+    sx_free(csum);
+    sx_free(diag);
+    sx_free(Ahat);
 
     // Step 3. Truncate the prolongation operator to reduce cost
     sx_amg_interp_trunc(P, pars);

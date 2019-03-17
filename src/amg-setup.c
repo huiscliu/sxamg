@@ -53,8 +53,8 @@ void sx_amg_setup(SX_AMG *mg, SX_MAT *A, SX_AMG_PARS *pars)
         // Check 1: Did coarsening step succeeded?
         if (status < 0) {
             /*-- Clean up Scouple generated in coarsening --*/
-            sx_mem_free(Scouple.Ap);
-            sx_mem_free(Scouple.Aj);
+            sx_free(Scouple.Ap);
+            sx_free(Scouple.Aj);
 
             // When error happens, stop at the current multigrid level!
             if (verb > 1) {
@@ -68,8 +68,8 @@ void sx_amg_setup(SX_AMG *mg, SX_MAT *A, SX_AMG_PARS *pars)
         // Check 2: Is coarse sparse too small?
         if (mg->cg[lvl].P.num_cols < min_cdof) {
             /*-- Clean up Scouple generated in coarsening --*/
-            sx_mem_free(Scouple.Ap);
-            sx_mem_free(Scouple.Aj);
+            sx_free(Scouple.Ap);
+            sx_free(Scouple.Aj);
 
             break;
         }
@@ -101,8 +101,8 @@ void sx_amg_setup(SX_AMG *mg, SX_MAT *A, SX_AMG_PARS *pars)
         mg->cg[lvl + 1].A = sx_blas_mat_rap(&mg->cg[lvl].R, &mg->cg[lvl].A, &mg->cg[lvl].P);
 
         /*-- Clean up Scouple generated in coarsening --*/
-        sx_mem_free(Scouple.Ap);
-        sx_mem_free(Scouple.Aj);
+        sx_free(Scouple.Ap);
+        sx_free(Scouple.Aj);
 
         // Check 4: Is the coarse matrix too dense?
         if (mg->cg[lvl].A.num_nnzs / mg->cg[lvl].A.num_rows > mg->cg[lvl].A.num_cols * 0.2) {

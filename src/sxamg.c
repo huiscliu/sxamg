@@ -59,7 +59,7 @@ SX_RTN sx_solver_amg_solve(SX_AMG *mg, SX_VEC *x, SX_VEC *b)
 
         // Form residual r = b - A*x
         sx_vec_cp(b, r);
-        sx_blas_mat_amxpy(-1.0, ptrA, x, r);
+        sx_blas_mv_amxpy(-1.0, ptrA, x, r);
 
         // Compute norms of r and convergence factor
         absres = sx_blas_vec_norm2(r);  // residual ||r||

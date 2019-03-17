@@ -26,7 +26,7 @@ static SX_INT sx_solver_cg(SX_KRYLOV *ks)
     SX_FLT absres_best = BIGFLOAT;   // initial best known residual
 
     // allocate temp memory (need 5*m SX_FLT numbers)
-    SX_FLT *work = (SX_FLT *) sx_mem_calloc(5 * m, sizeof(SX_FLT));
+    SX_FLT *work = (SX_FLT *) sx_calloc(5 * m, sizeof(SX_FLT));
     SX_FLT *p = work, *z = work + m, *r = z + m, *t = r + m, *u_best = t + m;
     SX_VEC vr;
 
@@ -35,7 +35,7 @@ static SX_INT sx_solver_cg(SX_KRYLOV *ks)
 
     // r = b-A*u
     sx_blas_array_cp(m, b->d, r);
-    sx_blas_mat_amxpy(-1.0, A, u, &vr);
+    sx_blas_mv_amxpy(-1.0, A, u, &vr);
     sx_blas_array_cp(m, r, z);
 
     // compute initial residuals
@@ -80,7 +80,7 @@ static SX_INT sx_solver_cg(SX_KRYLOV *ks)
         vp.d = p;
         vt.n = b->n;
         vt.d = t;
-        sx_blas_mat_mxy(A, &vp, &vt);
+        sx_blas_mv_mxy(A, &vp, &vt);
 
         // alpha_k=(z_{k-1},r_{k-1})/(A*p_{k-1},p_{k-1})
         temp2 = sx_blas_array_dot(m, t, p);
@@ -143,7 +143,7 @@ static SX_INT sx_solver_cg(SX_KRYLOV *ks)
         if ((stag <= MaxStag) & (reldiff < maxdiff)) {
 
             sx_blas_array_cp(m, b->d, r);
-            sx_blas_mat_amxpy(-1.0, A, u, &vr);
+            sx_blas_mv_amxpy(-1.0, A, u, &vr);
 
             // compute residuals
             switch (stop_type) {
@@ -183,7 +183,7 @@ static SX_INT sx_solver_cg(SX_KRYLOV *ks)
         if (relres < tol) {
             // compute residual r = b - Ax again
             sx_blas_array_cp(m, b->d, r);
-            sx_blas_mat_amxpy(-1.0, A, u, &vr);
+            sx_blas_mv_amxpy(-1.0, A, u, &vr);
 
             // compute residuals
             switch (stop_type) {
@@ -246,7 +246,7 @@ static SX_INT sx_solver_cg(SX_KRYLOV *ks)
 
         // compute best residual
         sx_blas_array_cp(m, b->d, r);
-        sx_blas_mat_amxpy(-1.0, A, &vb, &vr);
+        sx_blas_mv_amxpy(-1.0, A, &vb, &vr);
 
         switch (stop_type) {
             case STOP_REL_RES:
@@ -273,7 +273,7 @@ static SX_INT sx_solver_cg(SX_KRYLOV *ks)
  eofc:
 
     // clean up temp memory
-    sx_mem_free(work);
+    sx_free(work);
 
     if (iter > maxit)
         return ERROR_SOLVER_MAXIT;
@@ -315,12 +315,12 @@ static SX_INT sx_solver_gmres(SX_KRYLOV *ks)
     SX_VEC vs, vr;
 
     /* allocate memory and setup temp work space */
-    work = (SX_FLT *) sx_mem_calloc((restart + 4) * (restart + n) + 1, sizeof(SX_FLT));
+    work = (SX_FLT *) sx_calloc((restart + 4) * (restart + n) + 1, sizeof(SX_FLT));
 
     /* check whether memory is enough for GMRES */
     while ((work == NULL) && (restart > 5)) {
         restart = restart - 5;
-        work = (SX_FLT *) sx_mem_calloc((restart + 4) * (restart + n) + 1, sizeof(SX_FLT));
+        work = (SX_FLT *) sx_calloc((restart + 4) * (restart + n) + 1, sizeof(SX_FLT));
         sx_printf("### WARNING: GMRES restart number set to %"dFMT"!\n", restart);
         restart1 = restart + 1;
     }
@@ -332,9 +332,9 @@ static SX_INT sx_solver_gmres(SX_KRYLOV *ks)
         exit(ERROR_ALLOC_MEM);
     }
 
-    p = (SX_FLT **) sx_mem_calloc(restart1, sizeof(SX_FLT *));
-    hh = (SX_FLT **) sx_mem_calloc(restart1, sizeof(SX_FLT *));
-    norms = (SX_FLT *) sx_mem_calloc(maxit + 1, sizeof(SX_FLT));
+    p = (SX_FLT **) sx_calloc(restart1, sizeof(SX_FLT *));
+    hh = (SX_FLT **) sx_calloc(restart1, sizeof(SX_FLT *));
+    norms = (SX_FLT *) sx_calloc(maxit + 1, sizeof(SX_FLT));
 
     r = work;
     w = r + n;
@@ -352,7 +352,7 @@ static SX_INT sx_solver_gmres(SX_KRYLOV *ks)
     sx_blas_array_cp(n, b->d, p[0]);
 
     vs.d = p[0];
-    sx_blas_mat_amxpy(-1.0, A, x, &vs);
+    sx_blas_mv_amxpy(-1.0, A, x, &vs);
     r_norm = sx_blas_array_norm2(n, p[0]);
 
     // compute initial residuals
@@ -409,7 +409,7 @@ static SX_INT sx_solver_gmres(SX_KRYLOV *ks)
             vp.d = p[i];
 
             sx_blas_array_cp(n, p[i - 1], r);
-            sx_blas_mat_mxy(A, &vr, &vp);
+            sx_blas_mv_mxy(A, &vr, &vp);
 
             /* modified Gram_Schmidt */
             for (j = 0; j < i; j++) {
@@ -486,7 +486,7 @@ static SX_INT sx_solver_gmres(SX_KRYLOV *ks)
             sx_blas_array_cp(n, b->d, r);
 
             vs.d = r;
-            sx_blas_mat_amxpy(-1.0, A, x, &vs);
+            sx_blas_mv_amxpy(-1.0, A, x, &vs);
 
             r_norm = sx_blas_array_norm2(n, r);
 
@@ -545,7 +545,7 @@ static SX_INT sx_solver_gmres(SX_KRYLOV *ks)
 
         vs.d = x_best;
         vr.d = r;
-        sx_blas_mat_amxpy(-1.0, A, &vs, &vr);
+        sx_blas_mv_amxpy(-1.0, A, &vs, &vr);
 
         switch (stop_type) {
             case STOP_REL_RES:
@@ -570,10 +570,10 @@ static SX_INT sx_solver_gmres(SX_KRYLOV *ks)
     }
 
  eofc:
-    sx_mem_free(work);
-    sx_mem_free(p);
-    sx_mem_free(hh);
-    sx_mem_free(norms);
+    sx_free(work);
+    sx_free(p);
+    sx_free(hh);
+    sx_free(norms);
 
     if (iter >= maxit)
         return ERROR_SOLVER_MAXIT;

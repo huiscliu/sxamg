@@ -21,7 +21,7 @@ SX_AMG sx_amg_data_create(SX_AMG_PARS *pars)
     assert(pars->max_levels > 0);
 
     bzero(&mg, sizeof(mg));
-    mg.cg = sx_mem_calloc(pars->max_levels, sizeof(*mg.cg));
+    mg.cg = sx_calloc(pars->max_levels, sizeof(*mg.cg));
 
     /* record pars */
     mg.pars = *pars;
@@ -60,7 +60,7 @@ void sx_amg_data_destroy(SX_AMG *mg)
         sx_ivec_destroy(&mg->cg[i].cfmark);
     }
 
-    sx_mem_free(mg->cg);
+    sx_free(mg->cg);
     bzero(mg, sizeof(*mg));
 }
 

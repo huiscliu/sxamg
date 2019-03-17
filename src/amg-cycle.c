@@ -48,10 +48,10 @@ ForwardSweep:
 
         // form residual r = b - A x
         sx_blas_array_cp(mg->cg[l].A.num_rows, mg->cg[l].b.d, mg->cg[l].wp.d);
-        sx_blas_mat_amxpy(-1.0, &mg->cg[l].A, &mg->cg[l].x, &mg->cg[l].wp);
+        sx_blas_mv_amxpy(-1.0, &mg->cg[l].A, &mg->cg[l].x, &mg->cg[l].wp);
 
         // restriction r1 = R*r0
-        sx_blas_mat_mxy(&mg->cg[l].R, &mg->cg[l].wp, &mg->cg[l + 1].b);
+        sx_blas_mv_mxy(&mg->cg[l].R, &mg->cg[l].wp, &mg->cg[l + 1].b);
 
         // prepare for the next level
         l++;
@@ -68,7 +68,7 @@ ForwardSweep:
         l--;
 
         // prolongation u = u + alpha*P*e1
-        sx_blas_mat_amxpy(alpha, &mg->cg[l].P, &mg->cg[l + 1].x, &mg->cg[l].x);
+        sx_blas_mv_amxpy(alpha, &mg->cg[l].P, &mg->cg[l + 1].x, &mg->cg[l].x);
 
         // post-smoothing
         s.smoother = mg->pars.smoother;

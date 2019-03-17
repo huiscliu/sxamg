@@ -48,7 +48,7 @@ int sx_printf(const char *fmt, ...)
 }
 
 /**
- * \fn void * sx_mem_malloc(size_t size)
+ * \fn void * sx_malloc(size_t size)
  *
  * \brief Allocate  memory
  *
@@ -57,7 +57,7 @@ int sx_printf(const char *fmt, ...)
  * \return        Void pointer to the allocated memory
  *
  */
-void * sx_mem_malloc(size_t size)
+void * sx_malloc(size_t size)
 {
     const size_t tsize = size;
 
@@ -76,7 +76,7 @@ void * sx_mem_malloc(size_t size)
 }
 
 /**
- * \fn void * sx_mem_calloc(size_t size, SX_INT type)
+ * \fn void * sx_calloc(size_t size, SX_INT type)
  *
  * \brief Allocate, initiate, and check memory
  *
@@ -86,7 +86,7 @@ void * sx_mem_malloc(size_t size)
  * \return        Void pointer to the allocated memory
  *
  */
-void * sx_mem_calloc(size_t size, SX_INT type)
+void * sx_calloc(size_t size, SX_INT type)
 {
     const size_t tsize = size * type;
 
@@ -105,7 +105,7 @@ void * sx_mem_calloc(size_t size, SX_INT type)
 }
 
 /**
- * \fn void * sx_mem_realloc (void * oldmem, size_t type)
+ * \fn void * sx_realloc (void * oldmem, size_t type)
  *
  * \brief Reallocate, initiate, and check memory
  *
@@ -115,7 +115,7 @@ void * sx_mem_calloc(size_t size, SX_INT type)
  * \return        Void pointer to the reallocated memory
  *
  */
-void * sx_mem_realloc(void *oldmem, size_t tsize)
+void * sx_realloc(void *oldmem, size_t tsize)
 {
     void *mem = NULL;
 
@@ -132,7 +132,7 @@ void * sx_mem_realloc(void *oldmem, size_t tsize)
 }
 
 /**
- * \fn void sx_mem_free (void* mem)
+ * \fn void sx_free (void* mem)
  *
  * \brief Free up previous allocated memory body
  *
@@ -141,7 +141,7 @@ void * sx_mem_realloc(void *oldmem, size_t tsize)
  * \return      NULL pointer
  *
  */
-void sx_mem_free(void *mem)
+void sx_free(void *mem)
 {
     if (mem) free(mem);
 }

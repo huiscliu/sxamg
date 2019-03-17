@@ -63,7 +63,7 @@ typedef ListElement *LinkList; /**< linked list */
  */
 static void dispose_node(LinkList node_ptr)
 {
-    if (node_ptr) sx_mem_free(node_ptr);
+    if (node_ptr) sx_free(node_ptr);
 }
 
 /**
@@ -160,7 +160,7 @@ static LinkList create_node(SX_INT Item)
     /* Allocate memory space for the new node.
      * return with error if no space available
      */
-    new_node_ptr = (LinkList) sx_mem_calloc(1, sizeof(ListElement));
+    new_node_ptr = (LinkList) sx_calloc(1, sizeof(ListElement));
     new_node_ptr->data = Item;
     new_node_ptr->next_node = NULL;
     new_node_ptr->prev_node = NULL;
@@ -357,8 +357,8 @@ static void strong_couplings(SX_MAT *A, SX_IMAT *S, SX_AMG_PARS *pars)
     S->num_cols = col;
     S->num_nnzs = nnz;
     S->Ax = NULL;
-    S->Ap = (SX_INT *) sx_mem_calloc(row1, sizeof(SX_INT));
-    S->Aj = (SX_INT *) sx_mem_calloc(nnz, sizeof(SX_INT));
+    S->Ap = (SX_INT *) sx_calloc(row1, sizeof(SX_INT));
+    S->Aj = (SX_INT *) sx_calloc(nnz, sizeof(SX_INT));
     sx_iarray_cp(row1, ia, S->Ap);
     sx_iarray_cp(nnz, ja, S->Aj);
 
@@ -534,7 +534,7 @@ static SX_INT cfsplitting_cls(SX_MAT *A, SX_IMAT *S, SX_IVEC *vertices)
     SX_INT measure, newmeas;
     SX_INT i, j, k, l;
     SX_INT *vec = vertices->d;
-    SX_INT *work = (SX_INT *) sx_mem_calloc(3 * row, sizeof(SX_INT));
+    SX_INT *work = (SX_INT *) sx_calloc(3 * row, sizeof(SX_INT));
     SX_INT *lists = work, *where = lists + row, *lambda = where + row;
     SX_IMAT ST;
 
@@ -721,11 +721,11 @@ static SX_INT cfsplitting_cls(SX_MAT *A, SX_IMAT *S, SX_IVEC *vertices)
         head->prev_node = NULL;
         head->next_node = NULL;
         head = list_ptr->next_node;
-        sx_mem_free(list_ptr);
+        sx_free(list_ptr);
     }
 
 eofc:
-    sx_mem_free(work);
+    sx_free(work);
 
     return col;
 }
@@ -756,7 +756,7 @@ static SX_INT cfsplitting_clsp(SX_MAT *A, SX_IMAT *S, SX_IVEC *vertices)
     SX_INT i, j, k, l;
 
     SX_INT *ia = A->Ap, *vec = vertices->d;
-    SX_INT *work = (SX_INT *) sx_mem_calloc(3 * row, sizeof(SX_INT));
+    SX_INT *work = (SX_INT *) sx_calloc(3 * row, sizeof(SX_INT));
     SX_INT *lists = work, *where = lists + row, *lambda = where + row;
 
     LinkList head = NULL, tail = NULL, list_ptr = NULL;
@@ -767,8 +767,8 @@ static SX_INT cfsplitting_clsp(SX_MAT *A, SX_IMAT *S, SX_IVEC *vertices)
     Stemp.num_rows = S->num_rows;
     Stemp.num_cols = S->num_cols;
     Stemp.num_nnzs = S->num_nnzs;
-    Stemp.Ap = (SX_INT *) sx_mem_calloc(S->num_rows + 1, sizeof(SX_INT));
-    Stemp.Aj = (SX_INT *) sx_mem_calloc(S->num_nnzs, sizeof(SX_INT));
+    Stemp.Ap = (SX_INT *) sx_calloc(S->num_rows + 1, sizeof(SX_INT));
+    Stemp.Aj = (SX_INT *) sx_calloc(S->num_nnzs, sizeof(SX_INT));
     sx_iarray_cp(S->num_rows + 1, S->Ap, Stemp.Ap);
     sx_iarray_cp(S->num_nnzs, S->Aj, Stemp.Aj);
 
@@ -913,7 +913,7 @@ static SX_INT cfsplitting_clsp(SX_MAT *A, SX_IMAT *S, SX_IVEC *vertices)
         head->prev_node = NULL;
         head->next_node = NULL;
         head = list_ptr->next_node;
-        sx_mem_free(list_ptr);
+        sx_free(list_ptr);
     }
 
     // Enforce F-C connections. Adding this step helps for the ExxonMobil test
@@ -928,13 +928,13 @@ static SX_INT cfsplitting_clsp(SX_MAT *A, SX_IMAT *S, SX_IVEC *vertices)
     S->num_cols = Stemp.num_cols;
     S->num_nnzs = Stemp.num_nnzs;
 
-    sx_mem_free(S->Ap);
+    sx_free(S->Ap);
     S->Ap = Stemp.Ap;
-    sx_mem_free(S->Aj);
+    sx_free(S->Aj);
     S->Aj = Stemp.Aj;
 
 eofc:
-    sx_mem_free(work);
+    sx_free(work);
 
     return col;
 }
@@ -961,7 +961,7 @@ static SX_INT clean_ff_couplings(SX_IMAT *S, SX_IVEC *vertices, SX_INT row, SX_I
 {
     // local variables
     SX_INT *vec = vertices->d;
-    SX_INT *cindex = (SX_INT *) sx_mem_calloc(row, sizeof(SX_INT));
+    SX_INT *cindex = (SX_INT *) sx_calloc(row, sizeof(SX_INT));
     SX_INT set_empty = TRUE, C_i_nonempty = FALSE;
     SX_INT ci_tilde = -1, ci_tilde_mark = -1;
     SX_INT ji, jj, i, j, index;
@@ -1027,7 +1027,7 @@ static SX_INT clean_ff_couplings(SX_IMAT *S, SX_IVEC *vertices, SX_INT row, SX_I
         }                       // end for ji
     }                           // end for i
 
-    sx_mem_free(cindex);
+    sx_free(cindex);
 
     return col;
 }
@@ -1054,7 +1054,7 @@ static void form_P_pattern_dir(SX_MAT *P, SX_IMAT *S, SX_IVEC *vertices, SX_INT 
     // Initialize P matrix
     P->num_rows = row;
     P->num_cols = col;
-    P->Ap = (SX_INT *) sx_mem_calloc(row + 1, sizeof(SX_INT));
+    P->Ap = (SX_INT *) sx_calloc(row + 1, sizeof(SX_INT));
 
     // step 1: Find the structure IA of P first: using P as a counter
     for (i = 0; i < row; ++i) {
@@ -1083,8 +1083,8 @@ static void form_P_pattern_dir(SX_MAT *P, SX_IMAT *S, SX_IVEC *vertices, SX_INT 
     P->num_nnzs = P->Ap[P->num_rows] - P->Ap[0];
 
     // step 2: Find the structure JA of P
-    P->Aj = (SX_INT *) sx_mem_calloc(P->num_nnzs, sizeof(SX_INT));
-    P->Ax = (SX_FLT *) sx_mem_calloc(P->num_nnzs, sizeof(SX_FLT));
+    P->Aj = (SX_INT *) sx_calloc(P->num_nnzs, sizeof(SX_INT));
+    P->Ax = (SX_FLT *) sx_calloc(P->num_nnzs, sizeof(SX_FLT));
 
     for (index = i = 0; i < row; ++i) {
         if (vec[i] == FGPT) {   // fine grid point
@@ -1120,11 +1120,11 @@ static void form_P_pattern_std(SX_MAT *P, SX_IMAT *S, SX_IVEC *vertices, SX_INT 
     SX_INT *vec = vertices->d;
 
     // number of times a C-point is visited
-    SX_INT *visited = (SX_INT *) sx_mem_calloc(row, sizeof(SX_INT));
+    SX_INT *visited = (SX_INT *) sx_calloc(row, sizeof(SX_INT));
 
     P->num_rows = row;
     P->num_cols = col;
-    P->Ap = (SX_INT *) sx_mem_calloc(row + 1, sizeof(SX_INT));
+    P->Ap = (SX_INT *) sx_calloc(row + 1, sizeof(SX_INT));
 
     sx_iarray_set(row, visited, -1);
 
@@ -1167,8 +1167,8 @@ static void form_P_pattern_std(SX_MAT *P, SX_IMAT *S, SX_IVEC *vertices, SX_INT 
     P->num_nnzs = P->Ap[P->num_rows] - P->Ap[0];
 
     // Step 2: Find the structure JA of P
-    P->Aj = (SX_INT *) sx_mem_calloc(P->num_nnzs, sizeof(SX_INT));
-    P->Ax = (SX_FLT *) sx_mem_calloc(P->num_nnzs, sizeof(SX_FLT));
+    P->Aj = (SX_INT *) sx_calloc(P->num_nnzs, sizeof(SX_INT));
+    P->Ax = (SX_FLT *) sx_calloc(P->num_nnzs, sizeof(SX_FLT));
 
     sx_iarray_set(row, visited, -1);  // re-init visited array
 
@@ -1204,5 +1204,5 @@ static void form_P_pattern_std(SX_MAT *P, SX_IMAT *S, SX_IVEC *vertices, SX_INT 
     }
 
     // clean up
-    sx_mem_free(visited);
+    sx_free(visited);
 }

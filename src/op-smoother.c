@@ -35,13 +35,13 @@ static void sx_amg_smoother_poly(SX_MAT * Amat, SX_VEC * brhs, SX_VEC * usol, SX
     SX_FLT mu0, mu1, smu0, smu1;
 
     /* allocate memory */
-    Dinv = (SX_FLT *) sx_mem_calloc(n, sizeof(SX_FLT));
-    r = (SX_FLT *) sx_mem_calloc(n, sizeof(SX_FLT));
-    rbar = (SX_FLT *) sx_mem_calloc(n, sizeof(SX_FLT));
-    v0 = (SX_FLT *) sx_mem_calloc(n, sizeof(SX_FLT));
-    v1 = (SX_FLT *) sx_mem_calloc(n, sizeof(SX_FLT));
-    error = (SX_FLT *) sx_mem_calloc(n, sizeof(SX_FLT));
-    k = (SX_FLT *) sx_mem_calloc(6, sizeof(SX_FLT));    // coefficients for calculation
+    Dinv = (SX_FLT *) sx_calloc(n, sizeof(SX_FLT));
+    r = (SX_FLT *) sx_calloc(n, sizeof(SX_FLT));
+    rbar = (SX_FLT *) sx_calloc(n, sizeof(SX_FLT));
+    v0 = (SX_FLT *) sx_calloc(n, sizeof(SX_FLT));
+    v1 = (SX_FLT *) sx_calloc(n, sizeof(SX_FLT));
+    error = (SX_FLT *) sx_calloc(n, sizeof(SX_FLT));
+    k = (SX_FLT *) sx_calloc(6, sizeof(SX_FLT));    // coefficients for calculation
 
     // get the inverse of the diagonal of A
     Diaginv(Amat, Dinv);
@@ -72,7 +72,7 @@ static void sx_amg_smoother_poly(SX_MAT * Amat, SX_VEC * brhs, SX_VEC * usol, SX
         vr.d = r;
 
         // get residual
-        sx_blas_mat_mxy(Amat, usol, &vr); // r= Amat*u;
+        sx_blas_mv_mxy(Amat, usol, &vr); // r= Amat*u;
         sx_blas_array_axpyz(n, -1, r, b, r);  // r= -r+b;
 
         // Get correction error = R*r
@@ -84,13 +84,13 @@ static void sx_amg_smoother_poly(SX_MAT * Amat, SX_VEC * brhs, SX_VEC * usol, SX
     }
 
     // free memory
-    sx_mem_free(Dinv);
-    sx_mem_free(r);
-    sx_mem_free(rbar);
-    sx_mem_free(v0);
-    sx_mem_free(v1);
-    sx_mem_free(error);
-    sx_mem_free(k);
+    sx_free(Dinv);
+    sx_free(r);
+    sx_free(rbar);
+    sx_free(v0);
+    sx_free(v1);
+    sx_free(error);
+    sx_free(k);
 
     return;
 
@@ -211,7 +211,7 @@ static void Rr(SX_MAT * Amat, SX_FLT * Dinv, SX_FLT * r, SX_FLT * rbar, SX_FLT *
     Diagx(Dinv, n, r, rbar);    // rbar = Dinv *r;
 
     //2 set up v0, v1;
-    sx_blas_mat_mxy(Amat, &vr, &vv); //v1= A*rbar;
+    sx_blas_mv_mxy(Amat, &vr, &vv); //v1= A*rbar;
     Diagx(Dinv, n, v1, v1);     // v1=Dinv *v1;
 
     for (i = 0; i < n; i++) {
@@ -221,7 +221,7 @@ static void Rr(SX_MAT * Amat, SX_FLT * Dinv, SX_FLT * r, SX_FLT * rbar, SX_FLT *
 
     //3 iterate to get v_(j+1)
     for (j = 1; j < m; j++) {
-        sx_blas_mat_mxy(Amat, &vv, &vr);     //rbar= A*v_(j);
+        sx_blas_mv_mxy(Amat, &vv, &vr);     //rbar= A*v_(j);
 
         for (i = 0; i < n; i++) {
             rbar[i] = (r[i] - rbar[i]) * Dinv[i];       // indeed rbar=Dinv*(r-A*v_(j));
@@ -259,8 +259,8 @@ static void sx_amg_smoother_jacobi(SX_VEC * u, const SX_INT i_1, const SX_INT i_
     // local variables
     SX_INT i, j, k, begin_row, end_row;
 
-    SX_FLT *t = (SX_FLT *) sx_mem_calloc(N, sizeof(SX_FLT));
-    SX_FLT *d = (SX_FLT *) sx_mem_calloc(N, sizeof(SX_FLT));
+    SX_FLT *t = (SX_FLT *) sx_calloc(N, sizeof(SX_FLT));
+    SX_FLT *d = (SX_FLT *) sx_calloc(N, sizeof(SX_FLT));
 
     while (L--) {
         if (s > 0) {
@@ -301,8 +301,8 @@ static void sx_amg_smoother_jacobi(SX_VEC * u, const SX_INT i_1, const SX_INT i_
         }
     }
 
-    sx_mem_free(t);
-    sx_mem_free(d);
+    sx_free(t);
+    sx_free(d);
 
     return;
 }
@@ -624,8 +624,8 @@ static void sx_amg_smoother_L1diag(SX_VEC * u, const SX_INT i_1, const SX_INT i_
     SX_INT i, j, k, begin_row, end_row;
 
     // Checks should be outside of for; t,d can be allocated before calling
-    SX_FLT *t = (SX_FLT *) sx_mem_calloc(N, sizeof(SX_FLT));
-    SX_FLT *d = (SX_FLT *) sx_mem_calloc(N, sizeof(SX_FLT));
+    SX_FLT *t = (SX_FLT *) sx_calloc(N, sizeof(SX_FLT));
+    SX_FLT *d = (SX_FLT *) sx_calloc(N, sizeof(SX_FLT));
 
     while (L--) {
         if (s > 0) {
@@ -663,8 +663,8 @@ static void sx_amg_smoother_L1diag(SX_VEC * u, const SX_INT i_1, const SX_INT i_
         }
     }
 
-    sx_mem_free(t);
-    sx_mem_free(d);
+    sx_free(t);
+    sx_free(d);
 
     return;
 }
