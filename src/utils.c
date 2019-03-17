@@ -147,13 +147,13 @@ void sx_free(void *mem)
 }
 
 /**
- * \fn sx_gettime (SX_FLT *time)
+ * \fn sx_get_time (SX_FLT *time)
  *
  * \brief Get system time
  *
  */
 #if USE_UNIX
-SX_FLT sx_gettime(void)
+SX_FLT sx_get_time(void)
 {
     struct timeval tv;
     double t;
@@ -167,7 +167,7 @@ SX_FLT sx_gettime(void)
 #else
 #include <windows.h>
 
-SX_FLT sx_gettime()
+SX_FLT sx_get_time(void)
 {
     LARGE_INTEGER timer;
     static LARGE_INTEGER fre;
@@ -186,6 +186,18 @@ SX_FLT sx_gettime()
     return t;
 }
 #endif
+
+SX_FLT sx_get_mem(void)
+{
+    struct rusage RU;
+    SX_FLT mem_current;
+
+    /* getrusage() */
+    getrusage(RUSAGE_SELF, &RU);
+    mem_current = RU.ru_maxrss / (double)1024.;
+
+    return mem_current;
+}
 
 /**
  * \fn void sx_exit_on_errcode (const SX_INT status, const char *fctname)

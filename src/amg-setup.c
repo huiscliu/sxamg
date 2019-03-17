@@ -28,7 +28,7 @@ void sx_amg_setup(SX_AMG *mg, SX_MAT *A, SX_AMG_PARS *pars)
     max_lvls = pars->max_levels;
 
     /* timer */
-    setup_start = sx_gettime();
+    setup_start = sx_get_time();
 
     /* create mg */
     assert(mg != NULL);
@@ -138,7 +138,7 @@ void sx_amg_setup(SX_AMG *mg, SX_MAT *A, SX_AMG_PARS *pars)
     sx_ivec_destroy(&vertices);
 
     if (verb > 1) {
-        setup_end = sx_gettime();
+        setup_end = sx_get_time();
 
         sx_amg_complexity_print(mg);
         sx_printf("AMG setup time: %"fFMTg" s\n", setup_end - setup_start);

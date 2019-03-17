@@ -31,7 +31,7 @@ SX_RTN sx_solver_amg_solve(SX_AMG *mg, SX_VEC *x, SX_VEC *b)
     sumb = sx_blas_vec_norm2(b); // L2norm(b)
     absres0 = sumb;
 
-    solve_start = sx_gettime();
+    solve_start = sx_get_time();
 
     // Print iteration information if needed
     sx_print_itinfo(verb, STOP_REL_RES, iter, 1.0, sumb, 0.0);
@@ -81,7 +81,7 @@ SX_RTN sx_solver_amg_solve(SX_AMG *mg, SX_VEC *x, SX_VEC *b)
     }
 
     if (verb > 0) {
-        solve_end = sx_gettime();
+        solve_end = sx_get_time();
         sx_printf("AMG solve time: %"fFMTg" s\n", solve_end - solve_start);
     }
 
@@ -142,7 +142,7 @@ SX_RTN sx_solver_amg(SX_MAT *A, SX_VEC *x, SX_VEC *b, SX_AMG_PARS *pars)
     m = A->num_rows;
     n = A->num_cols;
 
-    if (verb > 0) AMG_start = sx_gettime();
+    if (verb > 0) AMG_start = sx_get_time();
 
     // check matrix data
     if (m != n) {
@@ -166,7 +166,7 @@ SX_RTN sx_solver_amg(SX_MAT *A, SX_VEC *x, SX_VEC *b, SX_AMG_PARS *pars)
 
     // print out CPU time if needed
     if (verb > 0) {
-        AMG_end = sx_gettime();
+        AMG_end = sx_get_time();
         sx_printf("AMG totally time: %"fFMTg" s\n", AMG_end - AMG_start);
     }
 

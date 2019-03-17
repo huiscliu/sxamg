@@ -96,7 +96,7 @@ int main(void)
         sx_printf("Initial residual: %"fFMTe"\n\n", err0);
 
         /* timer */
-        stm = sx_gettime();
+        stm = sx_get_time();
 
         for (i = 0; i < maxits; i++) {
             /* supposed to solve preconditioning system Mz = r */
@@ -149,7 +149,7 @@ int main(void)
             sx_printf("\ncg failed to converge.\n\n");
         }
         else {
-            stm = sx_gettime() - stm;
+            stm = sx_get_time() - stm;
 
             sx_printf("\ncg converged: absolute residual: %"fFMTe
                     ", total iterations: %"dFMT", time: %g s\n\n", err, i + 1, stm);

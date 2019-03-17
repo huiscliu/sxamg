@@ -36,7 +36,12 @@ void sx_free(void *mem);
 
 \section{Performance}
 
-\nverb{sx_gettime} returns current time stamp.
+\nverb{sx_get_time} returns current time stamp.
 \begin{evb}
-SX_FLT sx_gettime(void);
+SX_FLT sx_get_time(void);
+\end{evb}
+
+\nverb{sx_get_mem} returns current memory usage.
+\begin{evb}
+SX_FLT sx_get_mem(void);
 \end{evb}
