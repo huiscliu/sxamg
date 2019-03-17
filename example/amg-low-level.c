@@ -1,67 +1,54 @@
 
 #include "sxamg.h"
-
-static void sx_mat_read(const char *filemat, SX_MAT * A)
-{
-    SX_INT i, n;
-
-    /* read the matrix from file */
-    FILE *fp = fopen(filemat, "r");
-    SX_INT nz;
-
-    if (fp == NULL) {
-        sx_printf("### ERROR: Cannot open %s!\n", filemat);
-        exit(1);
-    }
-
-    fscanf(fp, "%"dFMT"\n", &n);
-    A->num_rows = n;
-    A->num_cols = n;
-    A->Ap = (SX_INT *) sx_calloc(n + 1, sizeof(SX_INT));
-
-    for (i = 0; i <= n; ++i) {
-        fscanf(fp, "%"dFMT"\n", A->Ap + i);
-    }
-
-    nz = A->Ap[n];
-    A->num_nnzs = nz;
-    A->Aj = (SX_INT *) sx_calloc(nz, sizeof(SX_INT));
-    A->Ax = (SX_FLT *) sx_calloc(nz, sizeof(SX_FLT));
-
-    for (i = 0; i < nz; ++i) {
-        fscanf(fp, "%"dFMT"\n", A->Aj + i);
-    }
-
-    for (i = 0; i < nz; ++i) fscanf(fp, "%"fFMTf"\n", A->Ax + i);
-
-    fclose(fp);
-}
+#include "mat.h"
 
 int main(void)
 {
     SX_AMG_PARS pars;
     SX_MAT A;
     SX_VEC b, x;
-    char *datafile1 = "A.dat";
-    int verb = 2;
+    char *mat_file = "A.dat";
     SX_AMG mg;
     SX_RTN rtn;
-    
+    SX_INT prob = 3;
+    SX_INT ncx = 23, ncy = 33, ncz = 24;
+    SX_INT nglobal = 0;
+
+    /* create distributed matrix */
+    if (prob == 1) {
+        nglobal = ncx;
+        A = laplacian_3pt(ncx);
+        sx_printf("sx: problem size: %d.\n", nglobal);
+    }
+    else if (prob == 2) {
+        nglobal = ncx * ncx;
+        A = laplacian_5pt(ncx);
+        sx_printf("sx: problem size: %d, %d x %d.\n", nglobal, ncx, ncx);
+    }
+    else if (prob == 3) {
+        nglobal = ncx * ncy * ncz;
+        A = laplacian_7pt_bound(ncx, ncy, ncz);
+
+        sx_printf("sx: problem size: %d, %d x %d x %d.\n", nglobal, ncx, ncy, ncz);
+    }
+    else if (prob == 4) {
+        sx_mat_read(mat_file, &A);
+    }
+    else {
+        sx_printf("sx: wrong problem.\n");
+        exit(-1);
+    }
+
     /* pars */
     sx_amg_pars_init(&pars);
     pars.maxit = 1000;
     pars.verb = 2;
     
-    /* system */
-    sx_mat_read(datafile1, &A);
-    
     /* print info */
-    if (verb > 0) {
-        sx_printf("\nA: m = %"dFMT", n = %"dFMT", nnz = %"dFMT"\n", A.num_rows,
-                A.num_cols, A.num_nnzs);
+    sx_printf("\nA: m = %"dFMT", n = %"dFMT", nnz = %"dFMT"\n", A.num_rows,
+            A.num_cols, A.num_nnzs);
 
-        sx_amg_pars_print(&pars);
-    }
+    sx_amg_pars_print(&pars);
 
     // Step 1: AMG setup phase
     sx_amg_setup(&mg, &A, &pars);

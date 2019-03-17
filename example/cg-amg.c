@@ -10,6 +10,7 @@ int main(void)
     SX_INT nglobal = 0;
     SX_INT k, i;
     SX_VEC x, b;
+    char *mat_file = "A.dat";
 
     assert(ncx > 0);
     assert(ncy > 0);
@@ -32,10 +33,17 @@ int main(void)
 
         sx_printf("sx: problem size: %d, %d x %d x %d.\n", nglobal, ncx, ncy, ncz);
     }
+    else if (prob == 4) {
+        sx_mat_read(mat_file, &A);
+    }
     else {
         sx_printf("sx: wrong problem.\n");
         exit(-1);
     }
+
+    /* print info */
+    sx_printf("A: m = %"dFMT", n = %"dFMT", nnz = %"dFMT"\n", A.num_rows,
+            A.num_cols, A.num_nnzs);
 
     /* create vectors */
     k = nglobal;
