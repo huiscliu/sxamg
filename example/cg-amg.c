@@ -5,7 +5,7 @@
 int main(void)
 {
     SX_MAT A;
-    SX_INT ncx = 23, ncy = 13, ncz = 24;
+    SX_INT ncx = 23, ncy = 33, ncz = 24;
     SX_INT prob = 3;
     SX_INT nglobal = 0;
     SX_INT k, i;
@@ -19,14 +19,18 @@ int main(void)
     if (prob == 1) {
         nglobal = ncx;
         A = laplacian_3pt(ncx);
+        sx_printf("sx: problem size: %d.\n", nglobal);
     }
     else if (prob == 2) {
         nglobal = ncx * ncx;
         A = laplacian_5pt(ncx);
+        sx_printf("sx: problem size: %d, %d x %d.\n", nglobal, ncx, ncx);
     }
     else if (prob == 3) {
         nglobal = ncx * ncy * ncz;
         A = laplacian_7pt_bound(ncx, ncy, ncz);
+
+        sx_printf("sx: problem size: %d, %d x %d x %d.\n", nglobal, ncx, ncy, ncz);
     }
     else {
         sx_printf("sx: wrong problem.\n");
@@ -56,6 +60,7 @@ int main(void)
         SX_VEC p;
         SX_VEC z, q;
         SX_FLT rho1, rho0 = 0., alpha, beta;
+        SX_FLT stm;
 
         /* preconditioner */
         SX_AMG mg;
@@ -76,10 +81,14 @@ int main(void)
         sx_blas_mv_amxpbyz(-1., &A, &x, 1., &b, &r);
         err0 = sx_blas_vec_norm2(&r);
 
+        sx_printf("\nsx: solver: CG, preconditioner: AMG\n");
         sx_printf("Convergence settings: relative residual: %"fFMTe
                 ", maximal iterations: %"dFMT"\n\n", tol, maxits);
 
         sx_printf("Initial residual: %"fFMTe"\n\n", err0);
+
+        /* timer */
+        stm = sx_gettime();
 
         for (i = 0; i < maxits; i++) {
             /* supposed to solve preconditioning system Mz = r */
@@ -132,8 +141,10 @@ int main(void)
             sx_printf("\ncg failed to converge.\n\n");
         }
         else {
+            stm = sx_gettime() - stm;
+
             sx_printf("\ncg converged: absolute residual: %"fFMTe
-                    ", total iterations: %"dFMT"\n\n", err, i + 1);
+                    ", total iterations: %"dFMT", time: %g s\n\n", err, i + 1, stm);
         }
 
         sx_vec_destroy(&r);
