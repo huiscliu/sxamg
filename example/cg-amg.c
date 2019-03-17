@@ -54,7 +54,7 @@ int main(void)
     /* solve Ax = b using CG with AMG preconditioner */
     {
         SX_INT maxits = 2000;  /* maximal iterations */
-        SX_FLT tol = 1e-4;     /* stop tolerance */
+        SX_FLT tol = 1e-6;     /* stop tolerance */
         SX_FLT err, err0;
         SX_VEC r;     /* residual */
         SX_VEC p;
