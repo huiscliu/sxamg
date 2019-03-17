@@ -14,24 +14,24 @@ int sx_printf(const char *fmt, ...);
 
 \section{Memory}
 
-\nverb{sx_mem_malloc} allocates memory.
+\nverb{sx_malloc} allocates memory.
 \begin{evb}
-void * sx_mem_malloc(size_t size);
+void * sx_malloc(size_t size);
 \end{evb}
 
-\nverb{sx_mem_calloc} allocates and initializes memory.
+\nverb{sx_calloc} allocates and initializes memory.
 \begin{evb}
-void * sx_mem_calloc(size_t size, SX_INT type);
+void * sx_calloc(size_t size, SX_INT type);
 \end{evb}
 
-\nverb{sx_mem_realloc} reallocates memory.
+\nverb{sx_realloc} reallocates memory.
 \begin{evb}
-void * sx_mem_realloc(void *oldmem, size_t tsize);
+void * sx_realloc(void *oldmem, size_t tsize);
 \end{evb}
 
-\nverb{sx_mem_free} frees memory.
+\nverb{sx_free} frees memory.
 \begin{evb}
-void sx_mem_free(void *mem);
+void sx_free(void *mem);
 \end{evb}
 
 \section{Performance}
