@@ -4,21 +4,6 @@
 
 #include <stdarg.h>
 
-#if HAVE_SYS_RESOURCE_H
-#include <sys/resource.h>
-#endif
-
-#if TIME_WITH_SYS_TIME
-#include <sys/time.h>
-#include <time.h>
-#else
-#if HAVE_SYS_TIME_H
-#include <sys/time.h>
-#else
-#include <time.h>
-#endif
-#endif
-
 static FILE *sx_log_handle_ = NULL;
 
 void sx_set_log(FILE *io)
@@ -153,6 +138,18 @@ void sx_free(void *mem)
  *
  */
 #if USE_UNIX
+
+#if TIME_WITH_SYS_TIME
+#include <sys/time.h>
+#include <time.h>
+#else
+#if HAVE_SYS_TIME_H
+#include <sys/time.h>
+#else
+#include <time.h>
+#endif
+#endif
+
 SX_FLT sx_get_time(void)
 {
     struct timeval tv;
@@ -187,6 +184,12 @@ SX_FLT sx_get_time(void)
 }
 #endif
 
+#if USE_UNIX
+
+#if HAVE_SYS_RESOURCE_H
+#include <sys/resource.h>
+#endif
+
 SX_FLT sx_get_mem(void)
 {
     struct rusage RU;
@@ -198,6 +201,14 @@ SX_FLT sx_get_mem(void)
 
     return mem_current;
 }
+
+#else /* windows programming required */
+SX_FLT sx_get_mem(void)
+{
+    return 0;
+}
+
+#endif
 
 /**
  * \fn void sx_exit_on_errcode (const SX_INT status, const char *fctname)
