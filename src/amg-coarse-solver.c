@@ -237,7 +237,7 @@ static SX_INT sx_solver_cg(SX_KRYLOV *ks)
 
     }
 
- RESTORE_BESTSOL:
+RESTORE_BESTSOL:
     if (iter != iter_best) {
         SX_VEC vb;
 
@@ -270,7 +270,7 @@ static SX_INT sx_solver_cg(SX_KRYLOV *ks)
         }
     }
 
- eofc:
+eofc:
 
     // clean up temp memory
     sx_free(work);
@@ -569,7 +569,7 @@ static SX_INT sx_solver_gmres(SX_KRYLOV *ks)
         }
     }
 
- eofc:
+eofc:
     sx_free(work);
     sx_free(p);
     sx_free(hh);

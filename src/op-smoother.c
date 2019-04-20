@@ -117,9 +117,9 @@ static void Diaginv(SX_MAT * Amat, SX_FLT * Dinv)
             if (i == ja[j])     // find the diagonal 
                 break;
         }
+
         Dinv[i] = 1.0 / a[j];
     }
-    return;
 }
 
 /**
@@ -174,8 +174,6 @@ static void Diagx(SX_FLT * Dinv, SX_INT n, SX_FLT * x, SX_FLT * b)
     for (i = 0; i < n; i++) {
         b[i] = Dinv[i] * x[i];
     }
-
-    return;
 }
 
 /**
@@ -303,8 +301,6 @@ static void sx_amg_smoother_jacobi(SX_VEC * u, const SX_INT i_1, const SX_INT i_
 
     sx_free(t);
     sx_free(d);
-
-    return;
 }
 
 /**
@@ -346,10 +342,10 @@ static void sx_amg_smoother_gs(SX_VEC * u, const SX_INT i_1, const SX_INT i_n, c
                     else if (SX_ABS(aj[k]) > SMALLFLOAT)
                         d = 1.e+0 / aj[k];
                 }
+
                 uval[i] = t * d;
             }                   // end for i
         }                       // end while
-
     }                           // if s
     else {
 
@@ -364,11 +360,11 @@ static void sx_amg_smoother_gs(SX_VEC * u, const SX_INT i_1, const SX_INT i_n, c
                     else if (SX_ABS(aj[k]) > SMALLFLOAT)
                         d = 1.0 / aj[k];
                 }
+
                 uval[i] = t * d;
             }                   // end for i
         }                       // end while
     }                           // end if
-    return;
 }
 
 /**
@@ -411,10 +407,9 @@ static void sx_amg_smoother_gs_cf(SX_VEC * u, SX_MAT * A, SX_VEC * b, SX_INT L, 
                             d = aj[k];
                     }           // end for k
 
-                    if (SX_ABS(d) > SMALLFLOAT)
-                        uval[i] = t / d;
+                    if (SX_ABS(d) > SMALLFLOAT) uval[i] = t / d;
                 }
-            }                   // end for i
+            }
 
             for (i = 0; i < nrow; i++) {
                 if (mark[i] == 1) {
@@ -428,12 +423,10 @@ static void sx_amg_smoother_gs_cf(SX_VEC * u, SX_MAT * A, SX_VEC * b, SX_INT L, 
                             d = aj[k];
                     }           // end for k
 
-                    if (SX_ABS(d) > SMALLFLOAT)
-                        uval[i] = t / d;
+                    if (SX_ABS(d) > SMALLFLOAT) uval[i] = t / d;
                 }
             }                   // end for i
         }                       // end while
-
     }
     else {                      // C-point first, F-point second
         while (L--) {
@@ -449,10 +442,9 @@ static void sx_amg_smoother_gs_cf(SX_VEC * u, SX_MAT * A, SX_VEC * b, SX_INT L, 
                             d = aj[k];
                     }           // end for k
 
-                    if (SX_ABS(d) > SMALLFLOAT)
-                        uval[i] = t / d;
+                    if (SX_ABS(d) > SMALLFLOAT) uval[i] = t / d;
                 }
-            }                   // end for i
+            }
 
             for (i = 0; i < nrow; i++) {
                 if (mark[i] != 1) {
@@ -472,8 +464,6 @@ static void sx_amg_smoother_gs_cf(SX_VEC * u, SX_MAT * A, SX_VEC * b, SX_INT L, 
             }                   // end for i
         }                       // end while
     }                           // end if order
-
-    return;
 }
 
 /**
@@ -510,8 +500,8 @@ static void sx_amg_smoother_sgs(SX_VEC * u, SX_MAT * A, SX_VEC * b, SX_INT L)
                 else
                     d = aj[k];
             }                   // end for k
-            if (SX_ABS(d) > SMALLFLOAT)
-                uval[i] = t / d;
+
+            if (SX_ABS(d) > SMALLFLOAT) uval[i] = t / d;
         }                       // end for i
 
         // backward sweep
@@ -525,12 +515,10 @@ static void sx_amg_smoother_sgs(SX_VEC * u, SX_MAT * A, SX_VEC * b, SX_INT L)
                 else
                     d = aj[k];
             }                   // end for k
-            if (SX_ABS(d) > SMALLFLOAT)
-                uval[i] = t / d;
+
+            if (SX_ABS(d) > SMALLFLOAT) uval[i] = t / d;
         }
     }
-
-    return;
 }
 
 /**
@@ -588,13 +576,12 @@ static void sx_amg_smoother_sor(SX_VEC * u, const SX_INT i_1, const SX_INT i_n, 
                     else
                         d = aj[k];
                 }
+
                 if (SX_ABS(d) > SMALLFLOAT)
                     uval[i] = w * (t / d) + (1 - w) * uval[i];
             }
         }
     }
-
-    return;
 }
 
 /**
@@ -665,8 +652,6 @@ static void sx_amg_smoother_L1diag(SX_VEC * u, const SX_INT i_1, const SX_INT i_
 
     sx_free(t);
     sx_free(d);
-
-    return;
 }
 
 /**

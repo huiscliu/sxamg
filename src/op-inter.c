@@ -178,18 +178,15 @@ static void interp_DIR(SX_MAT * A, SX_IVEC * vertices, SX_MAT * P, SX_AMG_PARS *
         }
 
         if (vec[i] == FGPT) {   // fine grid nodes
-
             amN = amP = apN = apP = 0.0;
-
             num_pcouple = 0;
 
             for (j = begin_row; j < end_row; ++j) {
-
-                if (j == idiag)
-                    continue;   // skip diagonal
+                if (j == idiag) continue;   // skip diagonal
 
                 // check a point strong-coupled to i or not
                 IS_STRONG = FALSE;
+
                 for (k = P->Ap[i]; k < P->Ap[i + 1]; ++k) {
                     if (P->Aj[k] == A->Aj[j]) {
                         IS_STRONG = TRUE;
@@ -210,7 +207,7 @@ static void interp_DIR(SX_MAT * A, SX_IVEC * vertices, SX_MAT * P, SX_AMG_PARS *
                         amP += A->Ax[j];
                     }
                 }
-            }                   // end for j
+            }
 
             // set weight factors
             alpha = amN / amP;
@@ -236,9 +233,7 @@ static void interp_DIR(SX_MAT * A, SX_IVEC * vertices, SX_MAT * P, SX_AMG_PARS *
                     P->Ax[j] = -alpha * A->Ax[l] / aii;
                 }
             }
-
         }                       // end if vec
-
         else if (vec[i] == CGPT) {      // coarse grid nodes
             P->Ax[P->Ap[i]] = 1.0;
         }
@@ -341,18 +336,15 @@ static void interp_STD(SX_MAT * A, SX_IVEC * vertices, SX_MAT * P, SX_IMAT * S, 
 
     // Step 1. Fill in values for interpolation operator P
     for (i = 0; i < row; i++) {
-
         if (vec[i] == FGPT) {
             alN = psum[i];
             alP = csum[i];
 
             // form the reverse indices for i-th row
-            for (j = A->Ap[i]; j < A->Ap[i + 1]; j++)
-                rindi[A->Aj[j]] = j;
+            for (j = A->Ap[i]; j < A->Ap[i + 1]; j++) rindi[A->Aj[j]] = j;
 
             // clean up Ahat for relevant nodes only
-            for (j = P->Ap[i]; j < P->Ap[i + 1]; j++)
-                Ahat[P->Aj[j]] = 0.0;
+            for (j = P->Ap[i]; j < P->Ap[i + 1]; j++) Ahat[P->Aj[j]] = 0.0;
 
             // set values of Ahat
             Ahat[i] = diag[i];
@@ -361,8 +353,9 @@ static void interp_STD(SX_MAT * A, SX_IVEC * vertices, SX_MAT * P, SX_IMAT * S, 
                 k = S->Aj[j];
                 aik = A->Ax[rindi[k]];
 
-                if (vec[k] == CGPT)
+                if (vec[k] == CGPT) {
                     Ahat[k] += aik;
+                }
                 else if (vec[k] == FGPT) {
                     akk = diag[k];
 
