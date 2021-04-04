@@ -104,8 +104,8 @@ int main(void)
             sx_blas_vec_copy(&r, &z);
 #else       /* amg pc */
             sx_blas_vec_set(&z, 0.);
-#endif
             sx_solver_amg_solve(&mg, &z, &r);
+#endif
 
             /* rho = <r, z> */
             rho1 = sx_blas_vec_dot(&r, &z);

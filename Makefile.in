@@ -28,7 +28,7 @@ install:
 	@(cd src; $(MAKE))
 	@mkdir -p ${libdir}
 	@/bin/rm -f ${libdir}/lib${SXAMGLIB}${LIB_SUFFIX} ${libdir}/lib${SXAMGLIB}.so >/dev/null 2>&1 || true
-	@cp -f lib/lib${SXAMGLIB}${LIB_SUFFIX} ${libdir}/
+	@cp -f src/lib${SXAMGLIB}${LIB_SUFFIX} ${libdir}/
 	@chmod 0644 ${libdir}/lib${SXAMGLIB}${LIB_SUFFIX}
 	@echo "installing header files to ${includedir}/"
 	@mkdir -p ${includedir}
