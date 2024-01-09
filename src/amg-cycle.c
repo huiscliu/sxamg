@@ -59,7 +59,7 @@ ForwardSweep:
     }
 
     // call the coarse space solver:
-    sx_amg_coarest_solve(&mg->cg[nl - 1].A, &mg->cg[nl - 1].b, &mg->cg[nl - 1].x, tol, verb);
+    sx_amg_coarest_solve(&mg->cg[nl - 1], tol, verb);
 
     // BackwardSweep:
     while (l > 0) {

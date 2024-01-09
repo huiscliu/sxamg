@@ -58,6 +58,9 @@ void sx_amg_data_destroy(SX_AMG *mg)
 
         sx_vec_destroy(&mg->cg[i].wp);
         sx_ivec_destroy(&mg->cg[i].cfmark);
+
+        sx_free(mg->cg[i].LU);
+        sx_free(mg->cg[i].pvt);
     }
 
     sx_free(mg->cg);

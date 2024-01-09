@@ -582,43 +582,91 @@ eofc:
 }
 
 /**
- * \fn static void sx_amg_coarest_solve(SX_MAT *A, SX_VEC *b, SX_VEC *x,
- *                                      const SX_FLT ctol, const SX_INT verb)
+ * \fn static void sx_amg_coarest_solve(SX_AMG_COMP *cg, const SX_FLT ctol, const SX_INT verb)
  *
  * \brief Iterative on the coarset level
  *
- * \pars  A         pointer to matrix data
- * \pars  b         pointer to rhs data
- * \pars  x         pointer to sol data
- * \pars  ctol      tolerance for the coarsest level
+ * \pars  cg     pointer to matrix data
+ * \pars  ctol   tolerance for the coarsest level
  * \pars  verb   level of output
  *
  */
-void sx_amg_coarest_solve(SX_MAT *A, SX_VEC *b, SX_VEC *x, const SX_FLT ctol, const SX_INT verb)
+void sx_amg_coarest_solve(SX_AMG_COMP *cg, const SX_FLT ctol, const SX_INT verb)
 {
+    SX_MAT *A = &cg->A;
+    SX_VEC *b = &cg->b;
+    SX_VEC *x = &cg->x;
     const SX_INT n = A->num_rows;
     const SX_INT maxit = SX_MAX(250, SX_MIN(n * n, 1000));
+    int use_krylov = 0;
 
-    SX_INT status;
-    SX_KRYLOV ks;
+    /* init */
+    if (!use_krylov) {
+        if (cg->LU == NULL) {
+            SX_INT i, k, j, ibegin, iend;
+            int rtn;
 
-    /* try cg first */
-    ks.A = A;
-    ks.b = b;
-    ks.u = x;
-    ks.tol = ctol;
-    ks.maxit = maxit;
-    ks.stop_type = 1;
-    ks.verb = 0;
-    status = sx_solver_cg(&ks);
+            cg->LU = sx_calloc(n * (size_t) n, sizeof(*cg->LU));
+            cg->pvt = sx_calloc(n, sizeof(*cg->pvt));
 
-    /* try GMRES if cg fails */
-    if (status < 0) {
-        ks.restart = MAX_RESTART;
-        status = sx_solver_gmres(&ks);
+            /* init LU */
+            for (i = 0; i < n; ++i) {
+                ibegin = A->Ap[i];
+                iend = A->Ap[i + 1];
+                for (k = ibegin; k < iend; ++k) {
+                    j = A->Aj[k];
+
+                    cg->LU[i * n + j] = A->Ax[k];
+                }
+            }
+
+            /* LU factorization */
+            rtn = sx_mat_dense_lu(n, cg->LU, cg->pvt);
+
+            /* failed */
+            if (!rtn) {
+                use_krylov = 1;
+
+                sx_free(cg->LU);
+                sx_free(cg->pvt);
+                cg->LU = NULL;
+                cg->pvt = NULL;
+            }
+        }
     }
 
-    if (status < 0 && verb >= 2) {
-        sx_printf("### WARNING: Coarse level solver failed to converge!\n");
+    if (use_krylov) {
+        SX_INT status;
+        SX_KRYLOV ks;
+
+        /* try cg first */
+        ks.A = A;
+        ks.b = b;
+        ks.u = x;
+        ks.tol = ctol;
+        ks.maxit = maxit;
+        ks.stop_type = 1;
+        ks.verb = 0;
+        status = sx_solver_cg(&ks);
+
+        /* try GMRES if cg fails */
+        if (status < 0) {
+            ks.restart = MAX_RESTART;
+            status = sx_solver_gmres(&ks);
+        }
+
+        if (status < 0 && verb >= 2) {
+            sx_printf("### WARNING: Coarse level solver failed to converge!\n");
+        }
+    }
+    else {
+        assert(cg->LU != NULL);
+        assert(cg->pvt != NULL);
+
+        /* init x */
+        memcpy(x->d, b->d, n * sizeof(*x->d));
+
+        /* solve */
+        sx_mat_dense_sv(n, cg->LU, cg->pvt, 1, x->d);
     }
 }

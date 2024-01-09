@@ -194,6 +194,9 @@ typedef struct SX_AMG_COMP_
 
     SX_VEC wp;                   /** cache work space */
 
+    SX_FLT *LU;
+    int *pvt;
+
 } SX_AMG_COMP;
 
 /** 
@@ -224,5 +227,33 @@ typedef struct SX_KRYLOV_
     SX_INT verb;
 
 } SX_KRYLOV;
+
+typedef enum
+{
+    ERROR_OPEN_FILE          = -10,  /**< fail to open a file */
+    ERROR_WRONG_FILE         = -11,  /**< input contains wrong format */
+    ERROR_INPUT_PAR          = -12,  /**< wrong input argument */
+    ERROR_MAT_SIZE           = -13,  /**< wrong problem size */
+    ERROR_MISC               = -14,  /**< other error */
+
+    ERROR_ALLOC_MEM          = -20,  /**< fail to allocate memory */
+    ERROR_DATA_STRUCTURE     = -21,  /**< problem with data structures */
+    ERROR_DATA_ZERODIAG      = -22,  /**< matrix has zero diagonal entries */
+    ERROR_DUMMY_VAR          = -23,  /**< unexpected input data */
+
+    ERROR_AMG_INTERP_TYPE    = -30,  /**< unknown interpolation type */
+    ERROR_AMG_SMOOTH_TYPE    = -31,  /**< unknown smoother type */
+    ERROR_AMG_COARSE_TYPE    = -32,  /**< unknown coarsening type */
+    ERROR_AMG_COARSEING      = -33,  /**< coarsening step failed to complete */
+
+    ERROR_SOLVER_STAG        = -42,  /**< solver stagnates */
+    ERROR_SOLVER_SOLSTAG     = -43,  /**< solver's solution is too small */
+    ERROR_SOLVER_TOLSMALL    = -44,  /**< solver's tolerance is too small */
+    ERROR_SOLVER_MAXIT       = -48,  /**< maximal iteration number exceeded */
+    ERROR_SOLVER_EXIT        = -49,  /**< solver does not quit successfully */
+
+    ERROR_UNKNOWN            = -99,  /**< an unknown error type */
+
+} SX_ERROR_CODE;
 
 #endif

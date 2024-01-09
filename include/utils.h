@@ -21,6 +21,15 @@ SX_FLT sx_get_mem(void);
 
 void sx_exit_on_errcode(const SX_INT status, const char *fctname);
 
+/* LU factorization */
+int sx_mat_dense_lu(int n, SX_FLT *A, int pvt[]);
+
+/* solves L*U*X = B  */
+void sx_mat_dense_sv(int n, SX_FLT *A, int pvt[], int m, SX_FLT *B);
+
+/* solves AX = B, returns 1 if successful and 0 if A is singular */
+int sx_mat_dense_solve(int n, int m, SX_FLT *A, SX_FLT *B);
+
 #ifdef __cplusplus
 }
 #endif

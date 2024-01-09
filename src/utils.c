@@ -342,3 +342,108 @@ void sx_iarray_cp(const SX_INT n, SX_INT *x, SX_INT *y)
 
     memcpy(y, x, n * sizeof(SX_INT));
 }
+
+/* LU factorization */
+int sx_mat_dense_lu(int n, SX_FLT *a0, int pvt[])
+{
+    int i, j, k;
+    SX_FLT d, r;
+
+#define a(i,j)	(a0[(i) * n + (j)])
+
+    for (i = 0; i < n; i++) {
+        d = fabs(a(i,i));
+        k = i;
+        for (j = i + 1; j < n; j++) {
+            if ((r = fabs(a(j,i))) > d) {
+                d = r;
+                k = j;
+            }
+        }
+
+        if (d == 0.0) {
+            return 0;
+        }
+
+        pvt[i] = k;
+        if (k != i) {
+            /* exchange row i and row k */
+            for (j = i; j < n; j++) {
+                d = a(i,j);
+                a(i,j) = a(k,j);
+                a(k,j) = d;
+            }
+        }
+
+        if ((d = a(i,i)) != 1.0) {
+            a(i,i) = d = 1.0 / d;
+            for (j = i + 1; j < n; j++) a(i,j) *= d;
+        }
+
+        for (j = i + 1; j < n; j++) {
+            if ((d = a(j,i)) == 0.0) continue;
+
+            for (k = i + 1; k < n; k++) a(j,k) -= d * a(i,k);
+        }
+    }
+
+#undef a
+
+    return 1;
+}
+
+/* solves L*U*X = B  */
+void sx_mat_dense_sv(int n, SX_FLT *a0, int pvt[], int m, SX_FLT *b0)
+{
+    int i, j, k;
+    SX_FLT d;
+
+#define a(i,j)	(a0[(i) * n + (j)])
+#define b(i,j)	(b0[(i) * m + (j)])
+
+    for (i = 0; i < n; i++) {
+        k = pvt[i];
+        if (k != i) {
+            /* exchange row i with row k */
+            for (j = 0; j < m; j++) {
+                d = b(i,j);
+                b(i,j) = b(k,j);
+                b(k,j) = d;
+            }
+        }
+
+        if ((d = a(i,i)) != 1.0) {
+            for (j = 0; j < m; j++)
+                b(i,j) *= d;
+        }
+
+        for (j = i + 1; j < n; j++) {
+            if ((d = a(j,i)) == 0.0) continue;
+
+            for (k = 0; k < m; k++) b(j,k) -= d * b(i,k);
+        }
+    }
+
+    for (i = n - 2; i >= 0; i--) {
+        for (j = i + 1; j < n; j++) {
+            d = a(i,j);
+            for (k = 0; k < m; k++) b(i,k) -= d * b(j,k);
+        }
+    }
+
+#undef a
+#undef b
+}
+
+/* solves AX = B, returns 1 if successful and 0 if A is singular */
+int sx_mat_dense_solve(int n, int m, SX_FLT *a0, SX_FLT *b0)
+{
+    int *pvt = malloc(n * sizeof(*pvt));
+
+    if (sx_mat_dense_lu(n, a0, pvt) == 0) return 0;
+
+    sx_mat_dense_sv(n, a0, pvt, m, b0);
+    free(pvt);
+
+    return 1;
+}
