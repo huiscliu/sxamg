@@ -136,6 +136,7 @@ void sx_amg_pars_init(SX_AMG_PARS *pars)
     pars->poly_deg = 3;
 
     pars->cs_type = SX_COARSE_RSP;
+    pars->cssolve_type = SX_CSSOLVE_LU;
 
     pars->interp_type = SX_INTERP_STD;
     pars->max_row_sum = 0.9;
@@ -191,6 +192,7 @@ void sx_amg_pars_print(SX_AMG_PARS *pars)
     sx_printf("AMG strong threshold:              %.4"fFMTf"\n", pars->strong_threshold);
     sx_printf("AMG truncation threshold:          %.4"fFMTf"\n", pars->trunc_threshold);
     sx_printf("AMG max row sum:                   %.4"fFMTf"\n", pars->max_row_sum);
+    sx_printf("AMG coarest solver:                %"dFMT"\n", pars->cssolve_type);
 
     sx_printf("-----------------------------------------------------------\n");
 }

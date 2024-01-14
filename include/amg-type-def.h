@@ -143,6 +143,17 @@ typedef struct SX_SMTR_
 } SX_SMTR;
 
 /**
+ * \brief Definition of coarsest solver types
+ */
+typedef enum SX_CSSOLVE_TYPE_
+{
+    SX_CSSOLVE_LU      = 1,  /**< LU */
+    SX_CSSOLVE_GMRES   = 2,  /**< gmres */
+    SX_CSSOLVE_CG      = 3,  /**< cg */
+
+} SX_CSSOLVE_TYPE;
+
+/**
  * \struct SX_AMG_PARS
  * \brief Parameters for AMG solver
  *
@@ -159,6 +170,7 @@ typedef struct SX_AMG_PARS_
     SX_COARSEN_TYPE cs_type;     /** coarsening type */
     SX_INT max_levels;           /** max number of levels of AMG */
     SX_INT coarse_dof;           /** max number of coarsest level DOF */
+    SX_CSSOLVE_TYPE cssolve_type;
 
     SX_SM_TYPE smoother;         /** smoother type */
     SX_FLT relax;                /** relax parseter for SOR smoother */

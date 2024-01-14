@@ -20,6 +20,7 @@ void sx_amg_cycle(SX_AMG *mg)
 
     SX_FLT alpha = 1.0;
     SX_INT num_lvl[MAX_AMG_LVL] = {0}, l = 0;
+    SX_CSSOLVE_TYPE cssolve_type = mg->pars.cssolve_type;
 
     if (tol > mg->pars.tol)  tol = mg->pars.tol * 0.1;
     if (cycle_itr <= 0) cycle_itr = 1;
@@ -59,7 +60,7 @@ ForwardSweep:
     }
 
     // call the coarse space solver:
-    sx_amg_coarest_solve(&mg->cg[nl - 1], tol, verb);
+    sx_amg_coarest_solve(&mg->cg[nl - 1], tol, cssolve_type, verb);
 
     // BackwardSweep:
     while (l > 0) {

@@ -5,7 +5,7 @@
 int main(void)
 {
     SX_MAT A;
-    SX_INT ncx = 23, ncy = 33, ncz = 24;
+    SX_INT ncx = 123, ncy = 33, ncz = 44;
     SX_INT prob = 3;
     SX_INT nglobal = 0;
     SX_INT k, i;
@@ -152,7 +152,7 @@ int main(void)
             stm = sx_get_time() - stm;
 
             sx_printf("\ncg converged: absolute residual: %"fFMTe
-                    ", total iterations: %"dFMT", time: %g s\n\n", err, i + 1, stm);
+                    ", total iterations: %"dFMT", time: %g s\n", err, i + 1, stm);
         }
 
         sx_vec_destroy(&r);
@@ -161,6 +161,13 @@ int main(void)
         sx_vec_destroy(&q);
 
         sx_amg_data_destroy(&mg);
+
+        /* verify */
+        sx_blas_mv_amxpby(-1, &A, &x, 1, &b);
+        err = sx_blas_vec_norm2(&b);
+
+        sx_printf("verify cg residual: absolute residual: %"fFMTe
+                ", total iterations: %"dFMT"\n\n", err, i);
     }
 
     /* release memory */
