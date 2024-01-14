@@ -147,9 +147,10 @@ typedef struct SX_SMTR_
  */
 typedef enum SX_CSSOLVE_TYPE_
 {
-    SX_CSSOLVE_LU      = 1,  /**< LU */
-    SX_CSSOLVE_GMRES   = 2,  /**< gmres */
-    SX_CSSOLVE_CG      = 3,  /**< cg */
+    SX_CSSOLVE_LU        = 1,  /**< LU */
+    SX_CSSOLVE_GMRES     = 2,  /**< gmres */
+    SX_CSSOLVE_CG        = 3,  /**< cg */
+    SX_CSSOLVE_BICGSTAB  = 4,  /**< bicgstab */
 
 } SX_CSSOLVE_TYPE;
 
@@ -235,8 +236,9 @@ typedef struct SX_KRYLOV_
     SX_VEC *u;
     SX_INT restart;
     SX_INT maxit;
-    SX_INT stop_type;
     SX_INT verb;
+
+    SX_RTN rtn;
 
 } SX_KRYLOV;
 

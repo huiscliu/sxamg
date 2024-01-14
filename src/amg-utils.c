@@ -198,20 +198,19 @@ void sx_amg_pars_print(SX_AMG_PARS *pars)
 }
 
 /**
- * \fn void sx_print_itinfo (const SX_INT verb, const SX_INT stop_type, const SX_INT iter,
+ * \fn void sx_print_itinfo (const SX_INT verb, const SX_INT iter,
  *                        const SX_FLT relres, const SX_FLT absres, const SX_FLT factor)
  *
  * \brief Print out iteration information for iterative solvers
  *
  * \pars verb     Level for output
- * \pars stop_type  Type of stopping criteria
  * \pars iter       Number of iterations
  * \pars relres     Relative residual of different kinds
  * \pars absres     Absolute residual of different kinds
  * \pars factor     Contraction factor
  *
  */
-void sx_print_itinfo(const SX_INT verb, const SX_INT stop_type, const SX_INT iter, const SX_FLT relres,
+void sx_print_itinfo(const SX_INT verb, const SX_INT iter, const SX_FLT relres,
         const SX_FLT absres, const SX_FLT factor)
 {
     if (verb >= 2) {
@@ -222,21 +221,7 @@ void sx_print_itinfo(const SX_INT verb, const SX_INT stop_type, const SX_INT ite
         }
         else {                  // iter = 0: initial guess
             sx_printf("-----------------------------------------------------------\n");
-
-            switch (stop_type) {
-                case STOP_REL_RES:
-                    sx_printf("It Num |   ||r||/||b||   |     ||r||      |  Conv. Factor\n");
-                    break;
-
-                case STOP_REL_PRECRES:
-                    sx_printf("It Num | ||r||_B/||b||_B |    ||r||_B     |  Conv. Factor\n");
-                    break;
-
-                case STOP_MOD_REL_RES:
-                    sx_printf("It Num |   ||r||/||x||   |     ||r||      |  Conv. Factor\n");
-                    break;
-            }
-
+            sx_printf("It Num |   ||r||/||b||   |     ||r||      |  Conv. Factor\n");
             sx_printf("-----------------------------------------------------------\n");
             sx_printf("%6"dFMT" | %13.6"fFMTe"   | %13.6"fFMTe"  |     -.-- \n", iter, relres, absres);
         }

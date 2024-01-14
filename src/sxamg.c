@@ -34,7 +34,7 @@ SX_RTN sx_solver_amg_solve(SX_AMG *mg, SX_VEC *x, SX_VEC *b)
     solve_start = sx_get_time();
 
     // Print iteration information if needed
-    sx_print_itinfo(verb, STOP_REL_RES, iter, 1.0, sumb, 0.0);
+    sx_print_itinfo(verb, iter, 1.0, sumb, 0.0);
 
     /* init, to make compiler happy */
     rtn.ares = 0;
@@ -68,7 +68,7 @@ SX_RTN sx_solver_amg_solve(SX_AMG *mg, SX_VEC *x, SX_VEC *b)
         absres0 = absres;               // prepare for next iteration
 
         // Print iteration information if needed
-        sx_print_itinfo(verb, STOP_REL_RES, iter, relres1, absres, factor);
+        sx_print_itinfo(verb, iter, relres1, absres, factor);
 
         /* save convergence info */
         rtn.ares = absres;
@@ -133,7 +133,7 @@ SX_RTN sx_solver_amg(SX_MAT *A, SX_VEC *x, SX_VEC *b, SX_AMG_PARS *pars)
         rtn.rres = 0;
         rtn.nits = 0;
 
-        sx_print_itinfo(verb, STOP_REL_RES, 0, 0., sumb, 0.0);
+        sx_print_itinfo(verb, 0, 0., sumb, 0.0);
 
         return rtn;
     }
@@ -168,6 +168,199 @@ SX_RTN sx_solver_amg(SX_MAT *A, SX_VEC *x, SX_VEC *b, SX_AMG_PARS *pars)
     if (verb > 0) {
         AMG_end = sx_get_time();
         sx_printf("AMG totally time: %"fFMTg" s\n", AMG_end - AMG_start);
+    }
+
+    return rtn;
+}
+
+/* krylov with right AMG preconditioner */
+SX_RTN sx_solver_gmres(SX_KRYLOV *ks, SX_AMG_PARS *pars)
+{
+    SX_INT verb;
+    SX_INT nnz, m, n;
+    SX_RTN rtn;
+    SX_AMG_PARS npars;
+    SX_MAT *A;
+    SX_VEC *x, *b;
+
+    SX_AMG mg;
+    SX_FLT AMG_start, AMG_end;
+
+    assert(ks != NULL);
+
+    A = ks->A;
+    x = ks->u;
+    b = ks->b;
+
+    assert(A != NULL);
+    assert(b != NULL);
+    assert(x != NULL);
+
+    if (pars == NULL) {
+        sx_amg_pars_init(&npars);
+        pars = &npars;
+    }
+
+    verb = pars->verb;
+
+    nnz = A->num_nnzs;
+    m = A->num_rows;
+    n = A->num_cols;
+
+    if (verb > 0) AMG_start = sx_get_time();
+
+    // check matrix data
+    if (m != n) {
+        sx_printf("### ERROR: A is not a square matrix!\n");
+        sx_exit_on_errcode(ERROR_MAT_SIZE, __FUNCTION__);
+    }
+
+    if (nnz <= 0) {
+        sx_printf("### ERROR: A has no nonzero entries!\n");
+        sx_exit_on_errcode(ERROR_MAT_SIZE, __FUNCTION__);
+    }
+
+    // Step 1: AMG setup phase
+    sx_amg_setup(&mg, A, pars);
+
+    // Step 2: solve phase
+    rtn = sx_solver_gmres_itnl(ks, &mg);
+
+    // clean-up memory
+    sx_amg_data_destroy(&mg);
+
+    // print out CPU time if needed
+    if (verb > 0) {
+        AMG_end = sx_get_time();
+        sx_printf("GMRES-AMG totally time: %"fFMTg" s\n", AMG_end - AMG_start);
+    }
+
+    return rtn;
+}
+
+SX_RTN sx_solver_cg(SX_KRYLOV *ks, SX_AMG_PARS *pars)
+{
+    SX_INT verb;
+    SX_INT nnz, m, n;
+    SX_RTN rtn;
+    SX_AMG_PARS npars;
+    SX_MAT *A;
+    SX_VEC *x, *b;
+
+    SX_AMG mg;
+    SX_FLT AMG_start, AMG_end;
+
+    assert(ks != NULL);
+
+    A = ks->A;
+    x = ks->u;
+    b = ks->b;
+
+    assert(A != NULL);
+    assert(b != NULL);
+    assert(x != NULL);
+
+    if (pars == NULL) {
+        sx_amg_pars_init(&npars);
+        pars = &npars;
+    }
+
+    verb = pars->verb;
+
+    nnz = A->num_nnzs;
+    m = A->num_rows;
+    n = A->num_cols;
+
+    if (verb > 0) AMG_start = sx_get_time();
+
+    // check matrix data
+    if (m != n) {
+        sx_printf("### ERROR: A is not a square matrix!\n");
+        sx_exit_on_errcode(ERROR_MAT_SIZE, __FUNCTION__);
+    }
+
+    if (nnz <= 0) {
+        sx_printf("### ERROR: A has no nonzero entries!\n");
+        sx_exit_on_errcode(ERROR_MAT_SIZE, __FUNCTION__);
+    }
+
+    // Step 1: AMG setup phase
+    sx_amg_setup(&mg, A, pars);
+
+    // Step 2: solve phase
+    rtn = sx_solver_cg_itnl(ks, &mg);
+
+    // clean-up memory
+    sx_amg_data_destroy(&mg);
+
+    // print out CPU time if needed
+    if (verb > 0) {
+        AMG_end = sx_get_time();
+        sx_printf("CG-AMG totally time: %"fFMTg" s\n", AMG_end - AMG_start);
+    }
+
+    return rtn;
+}
+
+SX_RTN sx_solver_bicgstab(SX_KRYLOV *ks, SX_AMG_PARS *pars)
+{
+    SX_INT verb;
+    SX_INT nnz, m, n;
+    SX_RTN rtn;
+    SX_AMG_PARS npars;
+    SX_MAT *A;
+    SX_VEC *x, *b;
+
+    SX_AMG mg;
+    SX_FLT AMG_start, AMG_end;
+
+    assert(ks != NULL);
+
+    A = ks->A;
+    x = ks->u;
+    b = ks->b;
+
+    assert(A != NULL);
+    assert(b != NULL);
+    assert(x != NULL);
+
+    if (pars == NULL) {
+        sx_amg_pars_init(&npars);
+        pars = &npars;
+    }
+
+    verb = pars->verb;
+
+    nnz = A->num_nnzs;
+    m = A->num_rows;
+    n = A->num_cols;
+
+    if (verb > 0) AMG_start = sx_get_time();
+
+    // check matrix data
+    if (m != n) {
+        sx_printf("### ERROR: A is not a square matrix!\n");
+        sx_exit_on_errcode(ERROR_MAT_SIZE, __FUNCTION__);
+    }
+
+    if (nnz <= 0) {
+        sx_printf("### ERROR: A has no nonzero entries!\n");
+        sx_exit_on_errcode(ERROR_MAT_SIZE, __FUNCTION__);
+    }
+
+    // Step 1: AMG setup phase
+    sx_amg_setup(&mg, A, pars);
+
+    // Step 2: solve phase
+    rtn = sx_solver_bicgstab_itnl(ks, &mg);
+
+    // clean-up memory
+    sx_amg_data_destroy(&mg);
+
+    // print out CPU time if needed
+    if (verb > 0) {
+        AMG_end = sx_get_time();
+        sx_printf("BICGSTAB-AMG totally time: %"fFMTg" s\n", AMG_end - AMG_start);
     }
 
     return rtn;

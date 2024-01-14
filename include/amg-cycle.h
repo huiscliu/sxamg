@@ -4,6 +4,7 @@
 
 #include "amg-type-def.h"
 #include "amg-setup.h"
+#include "amg-krylov.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -41,6 +41,13 @@ void sx_blas_array_ax(SX_INT n, SX_FLT a, SX_FLT *x)
     for (i = 0; i < n; ++i) x[i] *= a;
 }
 
+void sx_blas_array_axy(SX_INT n, SX_FLT a, const SX_FLT *x, SX_FLT *y)
+{
+    SX_INT i;
+
+    for (i = 0; i < n; ++i) y[i] = x[i] * a;
+}
+
 void sx_blas_array_axpy(SX_INT n, SX_FLT a, const SX_FLT *x, SX_FLT *y)
 {
     SX_INT i;
@@ -100,6 +107,29 @@ SX_FLT sx_blas_array_norminf(SX_INT n, const SX_FLT *x)
     for (i = 0; i < n; ++i) infnorm = SX_MAX(infnorm, SX_ABS(x[i]));
 
     return infnorm;
+}
+
+/**
+ * \fn void sx_blas_vec_axy (SX_FLT a, const SX_VEC *x, SX_VEC *y)
+ *
+ * \brief y = a*x
+ *
+ * \pars a   SX_FLT factor a
+ * \pars x   Pointer to SX_VEC x
+ * \pars y   Pointer to SX_VEC y
+ *
+ */
+void sx_blas_vec_axy(SX_FLT a, const SX_VEC *x, SX_VEC *y)
+{
+    SX_INT i, m = x->n;
+    SX_FLT *xpt = x->d, *ypt = y->d;
+
+    if ((y->n - m) != 0) {
+        sx_printf("### ERROR: Two vectors have different dimensions!\n");
+        sx_exit_on_errcode(ERROR_DATA_STRUCTURE, __FUNCTION__);
+    }
+
+    for (i = 0; i < m; ++i) ypt[i] = a * xpt[i];
 }
 
 /**
