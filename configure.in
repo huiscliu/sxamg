@@ -1,13 +1,13 @@
 
-AC_PREREQ(2.59)
+AC_PREREQ([2.71])
 
-AC_INIT()
+AC_INIT
 m4_ifdef([AC_DISABLE_OPTION_CHECKING], [AC_DISABLE_OPTION_CHECKING()], [])
 
 dnl This MUST precede any other macro
 AC_CONFIG_AUX_DIR([utils])
 
-AC_CONFIG_HEADER([include/config.h])
+AC_CONFIG_HEADERS([include/config.h])
 AC_CONFIG_FILES([Makefile Makefile.inc])
 AMG_DIR="`pwd`"
 
@@ -95,10 +95,7 @@ if test -z "$with_rpath_flag" -a "$enable_rpath" != "no"; then
 fi
 
 #--------------------------------------- header files
-AC_HEADER_STDC
-AC_HEADER_ASSERT
-AC_HEADER_TIME
-AC_CHECK_HEADERS([limits.h ctype.h])
+AC_CHECK_HEADERS_ONCE([sys/time.h])
 AC_CHECK_HEADERS([sys/time.h sys/resource.h unistd.h])
 
 #--------------------------------------- library functions.
@@ -106,9 +103,6 @@ AC_CHECK_FUNCS([gettimeofday getrusage])
 
 # fpe needs -lm
 LIBS="$LIBS -lm"
-
-AC_ADD_FLAGS(CPPFLAGS, -I/usr/local/include)
-AC_ADD_FLAGS(LDFLAGS, -L/usr/local/lib)
 
 #--------------------------------------- basic flags
 # Note: -I`pwd`/include and -L`pwd`/src must be the first term in CPPFLAGS
