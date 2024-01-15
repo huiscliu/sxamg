@@ -652,6 +652,11 @@ LIBOBJS
 USE_LONG_DOUBLE
 USE_LONG_INT
 RPATH_FLAG
+BUILD_CXXFLAGS
+BUILD_CFLAGS
+BUILD_SHARED_LIBS
+BUILD_SHARED
+LIB_SUFFIX
 RANLIB
 AR
 LINKER
@@ -705,6 +710,7 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
+enable_shared
 enable_rpath
 enable_big_int
 enable_long_double
@@ -1334,6 +1340,9 @@ Optional Features:
   --disable-option-checking  ignore unrecognized --enable/--with options
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+  --enable-shared         build shared library libsxamg.so (default)
+  --disable-shared        build static library libsxamg.a
+  --with-build-shared     the BUILD_SHARED macro (default "gcc -shared" or "${CC} -shared")
   --enable-rpath          enable use of rpath (default)
   --disable-rpath         disable use of rpath
   --with-rpath-flag=FLAG  compiler flag for rpath (e.g., "-Wl,-rpath,")
@@ -3444,8 +3453,6 @@ printf "%s\n" "no" >&6; }
 
 fi
 
-LIBS="-L/usr/local/lib $LIBS -lm"
-
         ac_cmd="`echo ${CC} | sed -e 's/[ 	].*$//'`"
     ac_args="`echo ${CC} | sed -e 's/^[ 	]*'${ac_cmd}'[ 	]*//'`"
     if test -z "${ac_cmd}"; then
@@ -3679,6 +3686,64 @@ else
 fi
 
 
+#--------------------------------------- shared library
+
+LIB_SUFFIX=""
+
+BUILD_SHARED=""
+
+BUILD_SHARED_LIBS=""
+
+BUILD_CFLAGS=""
+
+BUILD_CXXFLAGS=""
+
+# Check whether --enable-shared was given.
+if test ${enable_shared+y}
+then :
+  enableval=$enable_shared;
+else $as_nop
+  enable_shared="auto"
+fi
+
+
+if test "$enable_shared" = "auto"; then
+        enable_shared="yes"
+fi
+
+if test "$enable_shared" = "yes"; then
+    /bin/rm -f src/libsxamg.a
+    LIB_SUFFIX=".so"
+
+    if test -n "$with_build_shared"; then
+        BUILD_SHARED="$with_build_shared"
+    elif gcc -v >/dev/null 2>&1 && \
+         test "$cross_compiling" != "yes" && \
+         test "$target_vendor" != "apple" # MacOS: force using "${CC} -shared"
+    then
+        BUILD_SHARED="gcc -shared"
+    else
+        BUILD_SHARED="\${CC} -shared"
+    fi
+
+    # TODO: figure out a proper way to determine when to use the PIC flag
+    if test "$target_cpu" != "i686" -a "$target_cpu" != "i586" -a \
+            "$target_cpu" != "i486" -a "$target_cpu" != "i386"; then
+        BUILD_CFLAGS="-fPIC"
+        BUILD_CXXFLAGS="-fPIC"
+            fi
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: *** building shared library libsxamg$LIB_SUFFIX (\"$BUILD_SHARED\")" >&5
+printf "%s\n" "$as_me: *** building shared library libsxamg$LIB_SUFFIX (\"$BUILD_SHARED\")" >&6;}
+else
+    /bin/rm -f src/libsxamg.so
+    LIB_SUFFIX=".a"
+    BUILD_SHARED=""
+    BUILD_CFLAGS=""
+    BUILD_CXXFLAGS=""
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: *** building static library libsxamg$LIB_SUFFIX" >&5
+printf "%s\n" "$as_me: *** building static library libsxamg$LIB_SUFFIX" >&6;}
+fi
+
 #--------------------------------------- rpath
 RPATH_FLAG=""
 
@@ -3695,9 +3760,9 @@ if test -z "$with_rpath_flag" -a "$enable_rpath" != "no"; then
 printf %s "checking for compiler flag for specifying rpath ... " >&6; }
     LIBS_bak="$LIBS"
     for with_rpath_flag in "-Wl,-rpath," "-Wl,-rpath " "-Wl,--rpath " \
-			   "-rpath " "--rpath " "-Wl,-R" "-R" "-R " ; do
-	LIBS="$LIBS_bak ${with_rpath_flag}/usr/lib"
-	cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+                           "-rpath " "--rpath " "-Wl,-R" "-R" "-R " ; do
+        LIBS="$LIBS_bak ${with_rpath_flag}/usr/lib"
+        cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
 int
@@ -3716,17 +3781,17 @@ else $as_nop
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.beam \
     conftest$ac_exeext conftest.$ac_ext
-	if test "$enable_rpath" = "yes"; then break; fi
+        if test "$enable_rpath" = "yes"; then break; fi
     done
     LIBS="$LIBS_bak"
     if test "$enable_rpath" = "yes"; then
-	{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: \"$with_rpath_flag\"" >&5
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: \"$with_rpath_flag\"" >&5
 printf "%s\n" "\"$with_rpath_flag\"" >&6; }
-	RPATH_FLAG="$with_rpath_flag"
+        RPATH_FLAG="$with_rpath_flag"
     else
-	{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: unknown" >&5
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: unknown" >&5
 printf "%s\n" "unknown" >&6; }
-	RPATH_FLAG="unknown"
+        RPATH_FLAG="unknown"
     fi
 fi
 

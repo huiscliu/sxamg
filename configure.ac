@@ -49,8 +49,6 @@ if test "$GCC" = "yes"; then
 
 fi
 
-LIBS="-L/usr/local/lib $LIBS -lm"
-
 dnl Change relative path in compilers to full path
 AC_FULLPATH(CC)
 AC_FULLPATH(CPP)
@@ -68,6 +66,62 @@ fi
 AC_SUBST(AR)
 AC_PROG_RANLIB
 
+#--------------------------------------- shared library
+
+AC_SUBST(LIB_SUFFIX, "")
+AC_SUBST(BUILD_SHARED, "")
+AC_SUBST(BUILD_SHARED_LIBS, "")
+AC_SUBST(BUILD_CFLAGS, "")
+AC_SUBST(BUILD_CXXFLAGS, "")
+dnl AC_SUBST(BUILD_FFLAGS, "")
+AC_ARG_ENABLE(shared,
+[  --enable-shared         build shared library libsxamg.so (default)
+  --disable-shared        build static library libsxamg.a
+  --with-build-shared     the BUILD_SHARED macro (default "gcc -shared" or "${CC} -shared")],,enable_shared="auto")
+
+if test "$enable_shared" = "auto"; then
+dnl    if test "$target_vendor" = "apple"; then
+dnl        # use static link by default on MacOS, before the rpath issue is solved
+dnl        enable_shared="no"
+dnl    else
+        enable_shared="yes"
+dnl    fi
+fi
+
+if test "$enable_shared" = "yes"; then
+    /bin/rm -f src/libsxamg.a
+    LIB_SUFFIX=".so"
+
+    if test -n "$with_build_shared"; then
+        BUILD_SHARED="$with_build_shared"
+    elif gcc -v >/dev/null 2>&1 && \
+         test "$cross_compiling" != "yes" && \
+         test "$target_vendor" != "apple" # MacOS: force using "${CC} -shared"
+    then
+        BUILD_SHARED="gcc -shared"
+    else
+        BUILD_SHARED="\${CC} -shared"
+    fi
+
+    # TODO: figure out a proper way to determine when to use the PIC flag
+    if test "$target_cpu" != "i686" -a "$target_cpu" != "i586" -a \
+            "$target_cpu" != "i486" -a "$target_cpu" != "i386"; then
+        BUILD_CFLAGS="-fPIC"
+        BUILD_CXXFLAGS="-fPIC"
+        dnl BUILD_FFLAGS="-fPIC"
+    fi
+    dnl TODO: check that the above settings work!
+    AC_MSG_NOTICE([*** building shared library libsxamg$LIB_SUFFIX ("$BUILD_SHARED")])
+else
+    /bin/rm -f src/libsxamg.so
+    LIB_SUFFIX=".a"
+    BUILD_SHARED=""
+    BUILD_CFLAGS=""
+    BUILD_CXXFLAGS=""
+    dnl BUILD_FFLAGS=""
+    AC_MSG_NOTICE([*** building static library libsxamg$LIB_SUFFIX])
+fi
+
 #--------------------------------------- rpath
 AC_SUBST(RPATH_FLAG, "")
 AC_ARG_ENABLE(rpath,
@@ -79,18 +133,18 @@ if test -z "$with_rpath_flag" -a "$enable_rpath" != "no"; then
     AC_MSG_CHECKING([for compiler flag for specifying rpath ])
     LIBS_bak="$LIBS"
     for with_rpath_flag in "-Wl,-rpath," "-Wl,-rpath " "-Wl,--rpath " \
-			   "-rpath " "--rpath " "-Wl,-R" "-R" "-R " ; do
-	LIBS="$LIBS_bak ${with_rpath_flag}/usr/lib"
-	AC_LINK_IFELSE([AC_LANG_PROGRAM()], enable_rpath=yes, enable_rpath=no)
-	if test "$enable_rpath" = "yes"; then break; fi
+                           "-rpath " "--rpath " "-Wl,-R" "-R" "-R " ; do
+        LIBS="$LIBS_bak ${with_rpath_flag}/usr/lib"
+        AC_LINK_IFELSE([AC_LANG_PROGRAM()], enable_rpath=yes, enable_rpath=no)
+        if test "$enable_rpath" = "yes"; then break; fi
     done
     LIBS="$LIBS_bak"
     if test "$enable_rpath" = "yes"; then
-	AC_MSG_RESULT("$with_rpath_flag")
-	RPATH_FLAG="$with_rpath_flag"
+        AC_MSG_RESULT("$with_rpath_flag")
+        RPATH_FLAG="$with_rpath_flag"
     else
-	AC_MSG_RESULT(unknown)
-	RPATH_FLAG="unknown"
+        AC_MSG_RESULT(unknown)
+        RPATH_FLAG="unknown"
     fi
 fi
 

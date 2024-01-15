@@ -1,29 +1,34 @@
 SXAMGLIB        = sxamg
-LIB_SUFFIX      = .a
+LIB_SUFFIX	    = @LIB_SUFFIX@
 
-CPP	            = @CPP@
+CPP             = @CPP@
 CPPFLAGS        = @CPPFLAGS@
 
 CC              = @CC@
 CFLAGS          = @CFLAGS@
+BUILD_CFLAGS    = @BUILD_CFLAGS@
+USER_CFLAGS     =
 
 LINKER          = @LINKER@
 LDFLAGS         = @LDFLAGS@
 LIBS            = @LIBS@
+USER_LDFLAGS    =
 
-AR              = @AR@
-RANLIB          = @RANLIB@
+AR                = @AR@
+RANLIB            = @RANLIB@
+BUILD_SHARED      = @BUILD_SHARED@
+BUILD_SHARED_LIBS = @BUILD_SHARED_LIBS@
 
-prefix		= @prefix@
-libdir      = @prefix@/lib
-includedir  = @prefix@/include
-RPATH_FLAG	= @RPATH_FLAG@
+prefix        = @prefix@
+libdir        = @prefix@/lib
+includedir    = @prefix@/include
+RPATH_FLAG    = @RPATH_FLAG@
 
 %.o : %.c
-	${CC} ${CFLAGS} ${CPPFLAGS} -c $*.c
+	${CC} ${CFLAGS} ${CPPFLAGS} ${USER_CFLAGS} -c $*.c
 	@echo
 
 % : %.o
-	${LINKER} ${LDFLAGS} -o $@ $*.o ${LIBS}
+	${LINKER} ${USER_LDFLAGS} ${LDFLAGS} -o $@ $*.o ${LIBS}
 	@echo
 
