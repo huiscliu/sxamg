@@ -90,7 +90,7 @@ SX_RTN sx_solver_cg_itnl(SX_KRYLOV *ks, SX_AMG *mg)
 
         if (ks->verb >= 1) {
             printf("cg: itr: %5d, abs res: %.6e, rel res: %.6e, rbn: %.6e\n",
-                 itr_out, residual, (err_rel == 0 ? 0 : residual / err_rel),
+                 itr_out + 1, residual, (err_rel == 0 ? 0 : residual / err_rel),
                  (b_norm == 0 ? 0 : residual / b_norm));
         }
 
@@ -456,7 +456,7 @@ SX_RTN sx_solver_bicgstab_itnl(SX_KRYLOV *ks, SX_AMG *mg)
 
         if (ks->verb >= 1) {
             printf("bicgstab: itr: %5d, abs res: %.6e, rel res: %.6e, "
-                    "rbn: %.6e\n", itr_out, residual, (err_rel == 0 ? 0 : residual / err_rel), 
+                    "rbn: %.6e\n", itr_out + 1, residual, (err_rel == 0 ? 0 : residual / err_rel), 
                     (b_norm == 0 ? 0 : residual / b_norm));
         }
 
