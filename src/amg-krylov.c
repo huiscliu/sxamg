@@ -267,7 +267,7 @@ SX_RTN sx_solver_gmres_itnl(SX_KRYLOV *ks, SX_AMG *mg)
         }
 
 solve:
-        kk = i;
+        kk = i == m ? m : i + 1;
         for (i = kk - 1; i >= 0; i--) {
             ym[i] = gg[i] / Hg[i][i];
             for (j = 0; j < i; j++) {
