@@ -158,6 +158,12 @@ SX_RTN sx_solver_amg(SX_MAT *A, SX_VEC *x, SX_VEC *b, SX_AMG_PARS *pars)
     // Step 1: AMG setup phase
     sx_amg_setup(&mg, A, pars);
 
+    // print out CPU time if needed
+    if (verb > 0) {
+        AMG_end = sx_get_time();
+        sx_printf("AMG setup time: %"fFMTg" s\n", AMG_end - AMG_start);
+    }
+
     // Step 2: AMG solve phase
     rtn = sx_solver_amg_solve(&mg, x, b);
 
@@ -201,7 +207,7 @@ SX_RTN sx_solver_gmres(SX_KRYLOV *ks, SX_AMG_PARS *pars)
         pars = &npars;
     }
 
-    verb = pars->verb;
+    verb = ks->verb;
 
     nnz = A->num_nnzs;
     m = A->num_rows;
@@ -222,6 +228,12 @@ SX_RTN sx_solver_gmres(SX_KRYLOV *ks, SX_AMG_PARS *pars)
 
     // Step 1: AMG setup phase
     sx_amg_setup(&mg, A, pars);
+
+    // print out CPU time if needed
+    if (verb > 0) {
+        AMG_end = sx_get_time();
+        sx_printf("AMG setup time: %"fFMTg" s\n", AMG_end - AMG_start);
+    }
 
     // Step 2: solve phase
     rtn = sx_solver_gmres_itnl(ks, &mg);
@@ -265,7 +277,7 @@ SX_RTN sx_solver_cg(SX_KRYLOV *ks, SX_AMG_PARS *pars)
         pars = &npars;
     }
 
-    verb = pars->verb;
+    verb = ks->verb;
 
     nnz = A->num_nnzs;
     m = A->num_rows;
@@ -286,6 +298,12 @@ SX_RTN sx_solver_cg(SX_KRYLOV *ks, SX_AMG_PARS *pars)
 
     // Step 1: AMG setup phase
     sx_amg_setup(&mg, A, pars);
+
+    // print out CPU time if needed
+    if (verb > 0) {
+        AMG_end = sx_get_time();
+        sx_printf("AMG setup time: %"fFMTg" s\n", AMG_end - AMG_start);
+    }
 
     // Step 2: solve phase
     rtn = sx_solver_cg_itnl(ks, &mg);
@@ -329,7 +347,7 @@ SX_RTN sx_solver_bicgstab(SX_KRYLOV *ks, SX_AMG_PARS *pars)
         pars = &npars;
     }
 
-    verb = pars->verb;
+    verb = ks->verb;
 
     nnz = A->num_nnzs;
     m = A->num_rows;
@@ -350,6 +368,12 @@ SX_RTN sx_solver_bicgstab(SX_KRYLOV *ks, SX_AMG_PARS *pars)
 
     // Step 1: AMG setup phase
     sx_amg_setup(&mg, A, pars);
+
+    // print out CPU time if needed
+    if (verb > 0) {
+        AMG_end = sx_get_time();
+        sx_printf("AMG setup time: %"fFMTg" s\n", AMG_end - AMG_start);
+    }
 
     // Step 2: solve phase
     rtn = sx_solver_bicgstab_itnl(ks, &mg);
